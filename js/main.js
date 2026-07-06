@@ -859,22 +859,27 @@ const themes = {
 
     window.addEventListener("DOMContentLoaded", initSolutionPillHighlights);
 
-    // Ajuste v17:
-    // El selector de colores y el botón WhatsApp se agrupan y se mueven juntos.
-    // Si arrastras cualquiera de los dos elementos, se mueve el bloque completo.
+    // Ajuste v18:
+    // El selector de colores y WhatsApp se mueven juntos.
+    // "¡Muéveme!" aparece arriba de la paleta desde Soluciones en adelante,
+    // dura 15 segundos, vuelve cada 1 minuto y se desactiva para siempre
+    // cuando el usuario hace clic o mueve el bloque.
     function initMovableFloatingControls() {
       const themeSwitcher = document.querySelector(".theme-switcher");
       const whatsappButton = document.querySelector(".wa-float");
+      const solutionsSection = document.querySelector("#soluciones");
 
       if (!themeSwitcher || !whatsappButton) return;
 
       const cluster = document.createElement("div");
       cluster.className = "floating-control-cluster";
 
-      // Insertamos el bloque antes del selector y movemos ambos elementos dentro.
       themeSwitcher.parentNode.insertBefore(cluster, themeSwitcher);
       cluster.appendChild(themeSwitcher);
       cluster.appendChild(whatsappButton);
+
+      const HINT_DISMISSED_KEY = "mipymesmart-floating-controls-hint-dismissed";
+      const POSITION_KEY = "mipymesmart-floating-controls-position";
 
       const state = {
         x: null,
@@ -886,7 +891,12 @@ const themes = {
         dragging: false,
         moved: false,
         pointerId: null,
-        holdTimer: null
+        holdTimer: null,
+        idleTimer: null,
+        hintVisibleTimer: null,
+        hintCooldownTimer: null,
+        hintDismissed: localStorage.getItem(HINT_DISMISSED_KEY) === "true",
+        hintCycleActive: false
       };
 
       function clamp(value, min, max) {
@@ -915,7 +925,7 @@ const themes = {
 
       function ensurePosition() {
         if (state.x === null || state.y === null) {
-          const saved = localStorage.getItem("mipymesmart-floating-controls-position");
+          const saved = localStorage.getItem(POSITION_KEY);
 
           if (saved) {
             try {
@@ -932,10 +942,93 @@ const themes = {
         }
       }
 
+      function isBeyondHero() {
+        if (!solutionsSection) return false;
+
+        const header = document.querySelector(".site-header");
+        const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 76;
+        const threshold = solutionsSection.offsetTop - headerHeight - 40;
+
+        return window.pageYOffset >= threshold;
+      }
+
+      function hideHint() {
+        cluster.classList.remove("show-move-hint");
+        clearTimeout(state.hintVisibleTimer);
+      }
+
+      function clearHintCycle() {
+        hideHint();
+        clearTimeout(state.hintCooldownTimer);
+        state.hintCycleActive = false;
+      }
+
+      function dismissHintForever() {
+        if (state.hintDismissed) return;
+
+        state.hintDismissed = true;
+        localStorage.setItem(HINT_DISMISSED_KEY, "true");
+        clearHintCycle();
+      }
+
+      function showHintForAWhile() {
+        if (state.hintDismissed || !isBeyondHero()) {
+          clearHintCycle();
+          return;
+        }
+
+        state.hintCycleActive = true;
+        cluster.classList.add("show-move-hint");
+
+        clearTimeout(state.hintVisibleTimer);
+        state.hintVisibleTimer = setTimeout(() => {
+          cluster.classList.remove("show-move-hint");
+
+          clearTimeout(state.hintCooldownTimer);
+          state.hintCooldownTimer = setTimeout(() => {
+            if (!state.hintDismissed && isBeyondHero()) {
+              showHintForAWhile();
+            } else {
+              state.hintCycleActive = false;
+            }
+          }, 60000);
+        }, 15000);
+      }
+
+      function updateHintAvailability() {
+        if (state.hintDismissed) {
+          clearHintCycle();
+          return;
+        }
+
+        if (isBeyondHero()) {
+          if (!state.hintCycleActive && !cluster.classList.contains("show-move-hint")) {
+            showHintForAWhile();
+          }
+        } else {
+          clearHintCycle();
+        }
+      }
+
+      function setActiveVisualState() {
+        cluster.classList.remove("is-idle");
+        cluster.classList.add("is-near");
+
+        clearTimeout(state.idleTimer);
+        state.idleTimer = setTimeout(() => {
+          cluster.classList.remove("is-near");
+
+          if (!state.dragging) {
+            cluster.classList.add("is-idle");
+          }
+        }, 4200);
+      }
+
       function startDrag(event) {
         if (state.dragging) return;
 
         ensurePosition();
+        dismissHintForever();
 
         state.dragging = true;
         state.moved = false;
@@ -946,31 +1039,19 @@ const themes = {
         state.pointerStartY = event.clientY;
 
         cluster.classList.add("is-moving");
+        cluster.classList.remove("is-idle");
+        cluster.classList.add("is-near");
 
         try {
           cluster.setPointerCapture(event.pointerId);
         } catch (error) {}
       }
 
-      function nearPageBottom() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const viewportBottom = scrollTop + window.innerHeight;
-        const documentHeight = Math.max(
-          document.body.scrollHeight,
-          document.documentElement.scrollHeight
-        );
-
-        return viewportBottom >= documentHeight - 360;
-      }
-
-      function updateMoveHint() {
-        cluster.classList.toggle("show-move-hint", nearPageBottom());
-      }
-
       cluster.addEventListener("pointerdown", event => {
         if (event.button !== undefined && event.button !== 0) return;
 
         ensurePosition();
+        setActiveVisualState();
 
         state.pointerId = event.pointerId;
         state.startX = state.x;
@@ -999,6 +1080,7 @@ const themes = {
 
         event.preventDefault();
         state.moved = true;
+        setActiveVisualState();
 
         setPosition(state.startX + deltaX, state.startY + deltaY);
       });
@@ -1010,7 +1092,7 @@ const themes = {
 
         if (state.dragging) {
           localStorage.setItem(
-            "mipymesmart-floating-controls-position",
+            POSITION_KEY,
             JSON.stringify({ x: state.x, y: state.y })
           );
         }
@@ -1022,6 +1104,8 @@ const themes = {
         try {
           cluster.releasePointerCapture(event.pointerId);
         } catch (error) {}
+
+        setActiveVisualState();
       }
 
       cluster.addEventListener("pointerup", endDrag);
@@ -1029,6 +1113,9 @@ const themes = {
 
       // Si fue arrastrado, evitamos que active WhatsApp o cambie color accidentalmente.
       cluster.addEventListener("click", event => {
+        dismissHintForever();
+        setActiveVisualState();
+
         if (state.moved) {
           event.preventDefault();
           event.stopPropagation();
@@ -1039,18 +1126,36 @@ const themes = {
       // Doble clic sobre el bloque: volver al lugar original.
       cluster.addEventListener("dblclick", event => {
         event.preventDefault();
-        localStorage.removeItem("mipymesmart-floating-controls-position");
+        dismissHintForever();
+        localStorage.removeItem(POSITION_KEY);
         const defaultPosition = getDefaultPosition();
         setPosition(defaultPosition.x, defaultPosition.y);
+        setActiveVisualState();
       });
 
-      window.addEventListener("resize", ensurePosition);
-      window.addEventListener("scroll", updateMoveHint, { passive: true });
+      // Detecta cercanía del mouse para mostrar a color antes de estar encima.
+      window.addEventListener("pointermove", event => {
+        const rect = cluster.getBoundingClientRect();
+        const expanded = 70;
 
-      // Esperamos un frame para medir correctamente alto del cluster.
+        const near =
+          event.clientX >= rect.left - expanded &&
+          event.clientX <= rect.right + expanded &&
+          event.clientY >= rect.top - expanded &&
+          event.clientY <= rect.bottom + expanded;
+
+        if (near) {
+          setActiveVisualState();
+        }
+      }, { passive: true });
+
+      window.addEventListener("resize", ensurePosition);
+      window.addEventListener("scroll", updateHintAvailability, { passive: true });
+
       requestAnimationFrame(() => {
         ensurePosition();
-        updateMoveHint();
+        cluster.classList.add("is-idle");
+        updateHintAvailability();
       });
     }
 

@@ -2505,3 +2505,95 @@
       }
     }
 
+    /* Ajuste v18:
+       Aviso "¡Muéveme!" arriba de la paleta de colores, pulso de colores,
+       modo inactividad y desaparición permanente al interactuar. */
+    .floating-control-cluster {
+      transition:
+        opacity .35s ease,
+        filter .35s ease,
+        transform .18s ease;
+    }
+
+    .floating-control-cluster.is-idle {
+      opacity: .48;
+      filter: saturate(.72) brightness(.88);
+    }
+
+    .floating-control-cluster.is-idle:hover,
+    .floating-control-cluster.is-near,
+    .floating-control-cluster.is-moving {
+      opacity: 1;
+      filter: saturate(1) brightness(1);
+    }
+
+    .floating-control-cluster .theme-switcher {
+      position: relative;
+    }
+
+    /* Se anula el aviso anterior que salía sobre WhatsApp */
+    .floating-control-cluster.show-move-hint .wa-float::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .floating-control-cluster.show-move-hint .theme-switcher::before {
+      content: "¡Muéveme!";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 12px);
+      transform: translateX(-50%) translateY(6px);
+      padding: 7px 11px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      color: var(--soft);
+      background: rgba(5,9,15,.86);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 14px 34px rgba(0,0,0,.24);
+      animation: moveHintPop .38s ease forwards;
+    }
+
+    .floating-control-cluster.show-move-hint .theme-dot {
+      animation: themeDotWake 1.25s ease-in-out infinite;
+      border-color: rgba(255,255,255,.52);
+      box-shadow:
+        0 0 0 4px rgba(25,243,182,.10),
+        0 0 18px rgba(25,243,182,.22);
+    }
+
+    .floating-control-cluster.show-move-hint .theme-dot:nth-child(2) {
+      animation-delay: .08s;
+    }
+
+    .floating-control-cluster.show-move-hint .theme-dot:nth-child(3) {
+      animation-delay: .16s;
+    }
+
+    .floating-control-cluster.show-move-hint .theme-dot:nth-child(4) {
+      animation-delay: .24s;
+    }
+
+    @keyframes themeDotWake {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+        filter: brightness(1);
+      }
+
+      50% {
+        transform: translateY(-2px) scale(1.08);
+        filter: brightness(1.22);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .floating-control-cluster.show-move-hint .theme-switcher::before {
+        font-size: 11px;
+        padding: 6px 9px;
+      }
+    }
+
