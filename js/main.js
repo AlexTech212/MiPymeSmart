@@ -422,4 +422,268 @@ const themes = {
       });
     }
 
+
+
+    // Interacción tipo juego v5 para tarjetas del hero:
+    // arrastrar, lanzar, rebotar y efecto visual al chocar.
+    function initHeroPhysicsCards() {
+      const panel = document.querySelector(".hero-panel");
+      if (!panel) return;
+
+      const cards = [
+        panel.querySelector(".floating-metric"),
+        panel.querySelector(".chat-preview")
+      ].filter(Boolean);
+
+      if (!cards.length) return;
+
+      const systemWindow = panel.querySelector(".system-window");
+      panel.classList.add("physics-enabled");
+
+      let panelRect;
+      let animationFrame = null;
+      const states = new Map();
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function refreshPanelHeight() {
+        const systemHeight = systemWindow ? systemWindow.offsetHeight : 360;
+        const largestCard = Math.max(...cards.map(card => card.offsetHeight || 120));
+        const minHeight = systemHeight + largestCard + 64;
+        panel.style.minHeight = `${minHeight}px`;
+      }
+
+      function updatePanelRect() {
+        panelRect = panel.getBoundingClientRect();
+      }
+
+      function setCardPosition(card, x, y) {
+        const state = states.get(card);
+        if (!state) return;
+
+        state.x = x;
+        state.y = y;
+
+        card.style.setProperty("--card-x", `${x}px`);
+        card.style.setProperty("--card-y", `${y}px`);
+        card.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      }
+
+      function getBounds(card) {
+        updatePanelRect();
+        return {
+          minX: 18,
+          minY: 18,
+          maxX: Math.max(18, panel.clientWidth - card.offsetWidth - 18),
+          maxY: Math.max(18, panel.clientHeight - card.offsetHeight - 18)
+        };
+      }
+
+      function placeInitialCards() {
+        refreshPanelHeight();
+        updatePanelRect();
+
+        const systemBottom = systemWindow ? systemWindow.offsetTop + systemWindow.offsetHeight : 360;
+        const gap = 22;
+        const baseY = systemBottom + gap;
+
+        cards.forEach((card, index) => {
+          const bounds = getBounds(card);
+          const x = index === 0 ? bounds.minX : bounds.maxX;
+          const y = clamp(baseY, bounds.minY, bounds.maxY);
+
+          states.set(card, {
+            x,
+            y,
+            vx: 0,
+            vy: 0,
+            dragging: false,
+            lastX: 0,
+            lastY: 0,
+            lastT: 0,
+            pointerId: null,
+            startX: x,
+            startY: y
+          });
+
+          setCardPosition(card, x, y);
+        });
+      }
+
+      function impact(card, x, y) {
+        card.classList.remove("corner-hit");
+        void card.offsetWidth;
+        card.classList.add("corner-hit");
+
+        const dot = document.createElement("span");
+        dot.className = "impact-dot";
+        dot.style.left = `${x}px`;
+        dot.style.top = `${y}px`;
+        panel.appendChild(dot);
+
+        setTimeout(() => dot.remove(), 650);
+      }
+
+      function animate() {
+        let shouldContinue = false;
+
+        cards.forEach(card => {
+          const state = states.get(card);
+          if (!state || state.dragging) return;
+
+          if (Math.abs(state.vx) < 0.04 && Math.abs(state.vy) < 0.04) {
+            state.vx = 0;
+            state.vy = 0;
+            return;
+          }
+
+          const bounds = getBounds(card);
+
+          state.x += state.vx;
+          state.y += state.vy;
+
+          let hit = false;
+          let hitX = state.x + card.offsetWidth / 2;
+          let hitY = state.y + card.offsetHeight / 2;
+
+          if (state.x <= bounds.minX) {
+            state.x = bounds.minX;
+            state.vx = Math.abs(state.vx) * 0.72;
+            hit = true;
+            hitX = bounds.minX;
+          } else if (state.x >= bounds.maxX) {
+            state.x = bounds.maxX;
+            state.vx = -Math.abs(state.vx) * 0.72;
+            hit = true;
+            hitX = bounds.maxX + card.offsetWidth;
+          }
+
+          if (state.y <= bounds.minY) {
+            state.y = bounds.minY;
+            state.vy = Math.abs(state.vy) * 0.72;
+            hit = true;
+            hitY = bounds.minY;
+          } else if (state.y >= bounds.maxY) {
+            state.y = bounds.maxY;
+            state.vy = -Math.abs(state.vy) * 0.72;
+            hit = true;
+            hitY = bounds.maxY + card.offsetHeight;
+          }
+
+          if (hit) {
+            impact(card, hitX, hitY);
+          }
+
+          state.vx *= 0.985;
+          state.vy *= 0.985;
+
+          setCardPosition(card, state.x, state.y);
+          shouldContinue = true;
+        });
+
+        if (shouldContinue) {
+          animationFrame = requestAnimationFrame(animate);
+        } else {
+          animationFrame = null;
+        }
+      }
+
+      function startAnimation() {
+        if (!animationFrame) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+      }
+
+      cards.forEach(card => {
+        card.addEventListener("pointerdown", event => {
+          if (event.button !== undefined && event.button !== 0) return;
+
+          const state = states.get(card);
+          if (!state) return;
+
+          card.setPointerCapture(event.pointerId);
+          card.classList.add("is-dragging");
+
+          state.dragging = true;
+          state.pointerId = event.pointerId;
+          state.offsetX = event.clientX - panel.getBoundingClientRect().left - state.x;
+          state.offsetY = event.clientY - panel.getBoundingClientRect().top - state.y;
+          state.lastX = event.clientX;
+          state.lastY = event.clientY;
+          state.lastT = performance.now();
+          state.vx = 0;
+          state.vy = 0;
+        });
+
+        card.addEventListener("pointermove", event => {
+          const state = states.get(card);
+          if (!state || !state.dragging || state.pointerId !== event.pointerId) return;
+
+          const now = performance.now();
+          const dt = Math.max(now - state.lastT, 16);
+          const bounds = getBounds(card);
+
+          let nextX = event.clientX - panel.getBoundingClientRect().left - state.offsetX;
+          let nextY = event.clientY - panel.getBoundingClientRect().top - state.offsetY;
+
+          nextX = clamp(nextX, bounds.minX, bounds.maxX);
+          nextY = clamp(nextY, bounds.minY, bounds.maxY);
+
+          state.vx = ((event.clientX - state.lastX) / dt) * 16;
+          state.vy = ((event.clientY - state.lastY) / dt) * 16;
+          state.lastX = event.clientX;
+          state.lastY = event.clientY;
+          state.lastT = now;
+
+          setCardPosition(card, nextX, nextY);
+        });
+
+        card.addEventListener("pointerup", event => {
+          const state = states.get(card);
+          if (!state || state.pointerId !== event.pointerId) return;
+
+          state.dragging = false;
+          state.pointerId = null;
+          card.classList.remove("is-dragging");
+
+          try {
+            card.releasePointerCapture(event.pointerId);
+          } catch (error) {}
+
+          state.vx = clamp(state.vx, -22, 22);
+          state.vy = clamp(state.vy, -22, 22);
+          startAnimation();
+        });
+
+        card.addEventListener("pointercancel", () => {
+          const state = states.get(card);
+          if (!state) return;
+
+          state.dragging = false;
+          state.pointerId = null;
+          card.classList.remove("is-dragging");
+          startAnimation();
+        });
+
+        card.addEventListener("dblclick", () => {
+          const state = states.get(card);
+          if (!state) return;
+
+          state.vx = 0;
+          state.vy = 0;
+          setCardPosition(card, state.startX, state.startY);
+        });
+      });
+
+      window.addEventListener("resize", () => {
+        placeInitialCards();
+      });
+
+      placeInitialCards();
+    }
+
+    window.addEventListener("load", initHeroPhysicsCards);
+
     document.getElementById("year").textContent = new Date().getFullYear();
