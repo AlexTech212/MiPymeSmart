@@ -2015,3 +2015,58 @@
       }
     }
 
+    /* Ajuste v11:
+       TikTok y WhatsApp salen del recuadro "Sistema de modernización pyme".
+       Ahora quedan arriba del panel, en el espacio vacío superior del hero,
+       alineados hacia la derecha de las viñetas principales. */
+    .hero-grid {
+      position: relative;
+    }
+
+    .hero-grid > .hero-quick-actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 35;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .hero-panel .hero-quick-actions {
+      display: none !important;
+    }
+
+    .hero-grid > .hero-quick-actions + div {
+      padding-top: 0;
+    }
+
+    .hero-grid > .hero-quick-actions ~ .hero-panel {
+      margin-top: 42px;
+    }
+
+    @media (max-width: 1040px) {
+      .hero-grid > .hero-quick-actions {
+        position: relative;
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+        order: -1;
+        margin-bottom: -8px;
+      }
+
+      .hero-grid > .hero-quick-actions ~ .hero-panel {
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-grid > .hero-quick-actions {
+        flex-wrap: wrap;
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+    }
+
