@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiPymeSmart | Web, IA, Electricidad, Climatización y Automatización para Pymes</title>
+  <meta name="description" content="MiPymeSmart moderniza pymes con diseño web, posicionamiento, IA, automatización, electricidad, climatización, domótica y soluciones técnicas integrales." />
+  <meta name="theme-color" content="#060a10" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div class="ambient-layer active" id="ambientLayerA"></div>
+  <div class="ambient-layer" id="ambientLayerB"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="logo" href="#inicio" aria-label="Ir al inicio">
+        <span class="logo-mark"><span>MS</span></span>
+        <span class="brand-word"><strong>MiPyme</strong><span>Smart</span></span>
+      </a>
+
+      <nav class="menu" id="menu" aria-label="Menú principal">
+        <a href="#soluciones">Soluciones</a>
+        <a href="#automatizacion">Automatización</a>
+        <a href="#portafolio">Portafolio</a>
+        <a href="#redes">Redes</a>
+        <a href="#quien-soy">Quién soy</a>
+        <a href="#planes">Planes</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <a class="btn btn-primary" href="#contacto">Solicitar diagnóstico</a>
+      <button class="hamburger" id="hamburger" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="hero-pills">
+            <span class="pill hot">Modernización integral para pymes</span>
+            <span class="pill">Web + IA</span>
+            <span class="pill">Electricidad</span>
+            <span class="pill">Climatización</span>
+          </div>
+
+          <h1>Moderniza tu pyme con <span class="gradient-text">web, IA y soluciones técnicas inteligentes</span>.</h1>
+
+          <p class="lead">
+            Unimos presencia digital, automatización, IA, electricidad y climatización para que tu pyme venda mejor, funcione más segura y se vea más profesional.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#contacto">Quiero modernizar mi negocio</a>
+            <a class="btn btn-secondary" href="#soluciones">Ver soluciones</a>
+          </div>
+
+          <div class="trust-row">
+            <span class="pill">✓ Diseño web orientado a ventas</span>
+            <span class="pill">✓ Soluciones técnicas reales</span>
+            <span class="pill">✓ Atención cercana y por etapas</span>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <strong>360°</strong>
+              <p>Digital, técnico y operativo.</p>
+            </div>
+            <div class="stat">
+              <strong>24/7</strong>
+              <p>Atención inicial con IA.</p>
+            </div>
+            <div class="stat">
+              <strong>7 días</strong>
+              <p>Primer prototipo web.</p>
+            </div>
+            <div class="stat">
+              <strong>Chile</strong>
+              <p>Servicio regional y remoto.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-panel reveal" aria-label="Panel conceptual de modernización de negocios">
+          <div class="system-window">
+            <div class="window-top">
+              <div class="dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              </div>
+              <span class="window-title">Sistema de modernización pyme</span>
+            </div>
+
+            <div class="screen-card">
+              <strong>Presencia digital que vende</strong>
+              <p>Web, posicionamiento local, WhatsApp, portafolio y formularios inteligentes.</p>
+              <small>Impacto: más confianza y más solicitudes comerciales.</small>
+              <div class="progress"><span data-width="94%"></span></div>
+            </div>
+
+            <div class="screen-card">
+              <strong>Operación técnica confiable</strong>
+              <p>Electricidad, climatización, tableros, protecciones, diagnóstico y mantención.</p>
+              <small>Impacto: continuidad, seguridad y orden operativo.</small>
+              <div class="progress"><span data-width="86%"></span></div>
+            </div>
+
+            <div class="screen-card">
+              <strong>Automatización e IA</strong>
+              <p>Domótica, control, sensores, atención automatizada y seguimiento comercial.</p>
+              <small>Impacto: menos trabajo repetitivo y mejor experiencia del cliente.</small>
+              <div class="progress"><span data-width="80%"></span></div>
+            </div>
+          </div>
+
+          <div class="floating-metric">
+            <strong id="counterLeads">+0</strong>
+            <p>consultas mejor organizadas al mes con web, WhatsApp, formularios e IA.</p>
+          </div>
+
+          <div class="chat-preview">
+            <p><strong>Cliente:</strong> Tengo un local y quiero modernizarlo completo.</p>
+            <p><strong>MiPymeSmart:</strong> Podemos partir por diagnóstico digital, revisión técnica y propuesta por etapas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tight" id="soluciones">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Soluciones integrales</span>
+            <h2>Una sola propuesta para negocios que quieren crecer y operar mejor.</h2>
+          </div>
+          <p>La página está pensada para que un cliente que llega por diseño web también descubra soluciones reales de climatización, electricidad, domótica y automatización.</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card solution-card reveal">
+            <div class="icon">🌐</div>
+            <h3>Presencia digital y ventas</h3>
+            <p>Páginas web profesionales, landing pages, posicionamiento local, Google Business Profile, WhatsApp, formularios y textos comerciales.</p>
+            <ul class="features">
+              <li>Web rápida y responsive</li>
+              <li>Diseño orientado a conversión</li>
+              <li>Portafolio y casos de éxito</li>
+              <li>Captación de clientes</li>
+            </ul>
+            <a class="btn btn-secondary btn-small" href="#contacto">Cotizar web</a>
+          </article>
+
+          <article class="card solution-card reveal">
+            <div class="icon">⚡</div>
+            <h3>Electricidad y seguridad</h3>
+            <p>Soluciones eléctricas para locales, oficinas y pymes: revisión, tableros, protecciones, canalizaciones, enchufes, iluminación y mantención.</p>
+            <ul class="features">
+              <li>Diagnóstico eléctrico</li>
+              <li>Tableros y protecciones</li>
+              <li>Ordenamiento de instalaciones</li>
+              <li>Preparación para crecimiento</li>
+            </ul>
+            <a class="btn btn-secondary btn-small" href="#contacto">Solicitar revisión</a>
+          </article>
+
+          <article class="card solution-card reveal">
+            <div class="icon">❄️</div>
+            <h3>Climatización eficiente</h3>
+            <p>Instalación, diagnóstico y mejora de sistemas de climatización para negocios que necesitan confort, continuidad y eficiencia.</p>
+            <ul class="features">
+              <li>Aire acondicionado</li>
+              <li>Diagnóstico de fallas</li>
+              <li>Mantenimiento preventivo</li>
+              <li>Control y eficiencia</li>
+            </ul>
+            <a class="btn btn-secondary btn-small" href="#contacto">Ver solución</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="automatizacion">
+      <div class="container split-feature">
+        <div class="reveal">
+          <span class="eyebrow">Automatización de negocios</span>
+          <h2>Lo que no se ve también vende: energía, control y sistemas funcionando bien.</h2>
+          <p class="lead">
+            Un negocio moderno no es solo una página bonita. También necesita iluminación ordenada, climatización confiable, electricidad segura, procesos más simples y una experiencia cómoda para clientes y trabajadores.
+          </p>
+
+          <div class="automation-list">
+            <div class="value-item">
+              <span class="check">✓</span>
+              <p><strong>Domótica comercial:</strong> control de iluminación, climatización, horarios, escenas y automatizaciones básicas.</p>
+            </div>
+            <div class="value-item">
+              <span class="check">✓</span>
+              <p><strong>Control y monitoreo:</strong> sensores, revisión de consumo, alertas, tableros y sistemas preparados para crecer.</p>
+            </div>
+            <div class="value-item">
+              <span class="check">✓</span>
+              <p><strong>Experiencia de cliente:</strong> espacios más cómodos, ordenados, seguros y con mejor presentación comercial.</p>
+            </div>
+            <div class="value-item">
+              <span class="check">✓</span>
+              <p><strong>IA y seguimiento:</strong> atención inicial, registro de interesados, respuestas frecuentes y derivación por WhatsApp.</p>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#contacto">Evaluar mi negocio</a>
+            <a class="btn btn-secondary" href="#planes">Ver paquetes</a>
+          </div>
+        </div>
+
+        <div class="image-stage reveal" aria-label="Motor eléctrico iluminado, concepto de automatización y precisión técnica">
+          <img src="assets/automatizacion-negocios.png" alt="Motor eléctrico bajo iluminación superior, concepto de automatización de negocios" />
+          <div class="image-caption">
+            <span class="badge">Automatización + infraestructura</span>
+            <h3>Precisión técnica aplicada a negocios reales</h3>
+            <p>Electricidad, climatización, control y sistemas digitales trabajando juntos para mejorar la operación.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tight" id="experiencia">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Experiencia de usuario</span>
+            <h2>Un recorrido simple para que cada cliente encuentre su solución.</h2>
+          </div>
+          <p>El sitio guía al visitante según su necesidad: vender más, ordenar su local, mejorar climatización, revisar electricidad o automatizar procesos.</p>
+        </div>
+
+        <div class="grid-4">
+          <article class="card reveal">
+            <div class="icon">1</div>
+            <h3>Diagnóstico rápido</h3>
+            <p>El cliente identifica si necesita web, electricidad, climatización, IA o una modernización completa.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">2</div>
+            <h3>Ruta por prioridad</h3>
+            <p>Se propone partir por lo más urgente: captar clientes, corregir fallas o preparar infraestructura.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">3</div>
+            <h3>Propuesta por etapas</h3>
+            <p>Se evita abrumar al cliente. Primero se soluciona lo esencial y luego se escala.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">4</div>
+            <h3>Implementación clara</h3>
+            <p>Trabajo ordenado, comunicación simple y resultados visibles para el negocio.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section process" id="proceso">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Proceso</span>
+            <h2>De negocio tradicional a negocio moderno, paso a paso.</h2>
+          </div>
+          <p>Una metodología práctica para ordenar, implementar y mejorar sin complicar al dueño del negocio.</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card step reveal">
+            <h3>Diagnóstico 360°</h3>
+            <p>Revisamos presencia digital, atención, infraestructura técnica, climatización, electricidad y oportunidades de automatización.</p>
+          </article>
+
+          <article class="card step reveal">
+            <h3>Plan de acción</h3>
+            <p>Definimos qué conviene hacer primero, qué se puede dejar para una segunda etapa y qué impacto tendrá cada mejora.</p>
+          </article>
+
+          <article class="card step reveal">
+            <h3>Diseño y propuesta</h3>
+            <p>Armamos estructura web, requerimientos técnicos, automatizaciones, materiales, plazos y presupuesto.</p>
+          </article>
+
+          <article class="card step reveal">
+            <h3>Implementación</h3>
+            <p>Desarrollamos la web, instalamos o mejoramos sistemas técnicos y configuramos herramientas digitales.</p>
+          </article>
+
+          <article class="card step reveal">
+            <h3>Automatización</h3>
+            <p>Conectamos formularios, WhatsApp, IA, sensores, control o flujos simples según la necesidad del negocio.</p>
+          </article>
+
+          <article class="card step reveal">
+            <h3>Soporte y mejora</h3>
+            <p>Medimos, ajustamos, documentamos y acompañamos para que la solución siga funcionando y creciendo.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tight" id="portafolio">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Portafolio</span>
+            <h2>Proyectos digitales listos para mostrar confianza.</h2>
+          </div>
+          <p>Esta sección queda preparada para seguir agregando páginas web, sistemas, automatizaciones, instalaciones técnicas y casos de modernización.</p>
+        </div>
+
+        <div class="portfolio-grid">
+          <article class="card portfolio-card featured-project reveal">
+            <div class="project-top">
+              <div>
+                <span class="badge">Proyecto publicado</span>
+                <h3>MEL Upcycling</h3>
+                <p>Landing page para apoyar una campaña de votación, explicar una propuesta de moda sustentable y guiar al usuario hacia una acción principal.</p>
+              </div>
+              <div class="project-logo" aria-hidden="true">MEL</div>
+            </div>
+
+            <div class="project-tags">
+              <span class="pill">Landing page</span>
+              <span class="pill">Campaña digital</span>
+              <span class="pill">Diseño responsive</span>
+              <span class="pill">Llamados a la acción</span>
+            </div>
+
+            <div class="portfolio-mini-list">
+              <div class="portfolio-mini-item">
+                <strong>Objetivo</strong>
+                <p>Centralizar la información, explicar cómo votar y llevar al visitante al enlace oficial.</p>
+              </div>
+              <div class="portfolio-mini-item">
+                <strong>Enfoque</strong>
+                <p>Diseño claro, navegación simple, estructura rápida y experiencia pensada para celular.</p>
+              </div>
+            </div>
+
+            <a class="btn btn-primary project-link" href="https://melupcycling.netlify.app/" target="_blank" rel="noopener">Ver proyecto publicado</a>
+          </article>
+
+          <article class="card portfolio-card portfolio-placeholder reveal">
+            <span class="badge">Próximo proyecto</span>
+            <h3>Modernización de local comercial</h3>
+            <p>Espacio preparado para mostrar una intervención completa: web, electricidad, climatización, iluminación, domótica y automatización.</p>
+
+            <div class="portfolio-mini-list">
+              <div class="portfolio-mini-item">
+                <strong>Qué mostrar aquí</strong>
+                <p>Antes/después, problema del cliente, solución aplicada, materiales principales y beneficios obtenidos.</p>
+              </div>
+              <div class="portfolio-mini-item">
+                <strong>Ideal para</strong>
+                <p>Locales comerciales, oficinas, talleres, almacenes, centros estéticos, restaurantes y empresas de servicios.</p>
+              </div>
+            </div>
+
+            <div class="project-tags">
+              <span class="pill">Electricidad</span>
+              <span class="pill">Climatización</span>
+              <span class="pill">Domótica</span>
+              <span class="pill">Web + IA</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section social-section" id="redes">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Redes y contacto directo</span>
+            <h2>Conecta rápido por WhatsApp y revisa trabajos reales desde Instagram.</h2>
+          </div>
+          <p>Esta sección ayuda a transformar la confianza técnica en contacto directo: QR para escribir rápido, Instagram visible y videos de terreno integrados en la web.</p>
+        </div>
+
+        <div class="social-grid">
+          <article class="card qr-card reveal">
+            <span class="badge">WhatsApp directo</span>
+            <h3>Escanea el QR y solicita tu diagnóstico</h3>
+            <p>Ideal para clientes que ven la página desde computador o quieren guardar el contacto rápido desde el celular.</p>
+
+            <div class="qr-box">
+              <img src="assets/whatsapp-qr.png" alt="QR de WhatsApp para contactar a MiPymeSmart al número +56 9 7753 2697" />
+            </div>
+
+            <div class="contact-strip">
+              <a class="btn btn-primary" href="https://wa.me/56977532697?text=Hola%2C%20quiero%20solicitar%20un%20diagnóstico%20con%20MiPymeSmart." target="_blank" rel="noopener">Abrir WhatsApp</a>
+              <button class="btn btn-secondary" id="copyPhone" type="button">Copiar número: +56 9 7753 2697</button>
+            </div>
+            <p class="small" id="phoneStatus" style="margin-top: 12px;">El QR abre una conversación con MiPymeSmart.</p>
+          </article>
+
+          <div>
+            <article class="card instagram-card reveal">
+              <div>
+                <span class="badge">Instagram personal</span>
+                <h3>@4lexis_volt_electricidad</h3>
+                <p>Una vitrina para mostrar trabajos en terreno, soluciones eléctricas, climatización, automatización y avances reales de proyectos.</p>
+
+                <div class="project-tags">
+                  <span class="pill">Trabajos en terreno</span>
+                  <span class="pill">Electricidad</span>
+                  <span class="pill">Climatización</span>
+                  <span class="pill">Automatización</span>
+                </div>
+
+                <div class="hero-actions" style="margin-top: 18px;">
+                  <a class="btn btn-primary" href="https://www.instagram.com/4lexis_volt_electricidad/" target="_blank" rel="noopener">Ver Instagram</a>
+                  <button class="btn btn-secondary" id="copyInstagram" type="button">Copiar usuario</button>
+                </div>
+                <p class="small" id="instagramStatus" style="margin-top: 12px;">También puedes usar esta sección para vincular Reels específicos más adelante.</p>
+              </div>
+
+              <div class="ig-badge" aria-hidden="true">◎</div>
+            </article>
+
+            <div class="video-grid">
+              <article class="card video-card reveal">
+                <div class="video-frame">
+                  <video controls playsinline preload="metadata" src="assets/trabajo-terreno-01.mp4"></video>
+                </div>
+                <div class="video-info">
+                  <span class="badge">Video de terreno</span>
+                  <h3>Soluciones reales</h3>
+                  <p>Contenido para mostrar el lado técnico y generar confianza con clientes que buscan seriedad y experiencia.</p>
+                </div>
+              </article>
+
+              <article class="card video-card reveal">
+                <div class="video-frame">
+                  <video controls playsinline preload="metadata" src="assets/trabajo-terreno-02.mp4"></video>
+                </div>
+                <div class="video-info">
+                  <span class="badge">Redes sociales</span>
+                  <h3>Trabajo visible</h3>
+                  <p>Los videos ayudan a que el visitante vea evidencia del trabajo y pueda conectar con Instagram o WhatsApp.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="quien-soy">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Quién soy</span>
+            <h2>Una mirada práctica: ventas, terreno, electricidad, climatización, web e IA.</h2>
+          </div>
+          <p>MiPymeSmart nace desde una experiencia real: entender cómo funciona un negocio antes de proponer tecnología.</p>
+        </div>
+
+        <div class="about-shell">
+          <aside class="profile-card reveal">
+            <div class="avatar">DP</div>
+            <h3>Damián Parra</h3>
+            <p>Técnico del área eléctrica y automatización industrial, con experiencia en climatización, mantenimiento, soluciones técnicas, diseño web, IA aplicada y proyectos de eficiencia energética.</p>
+
+            <div class="profile-meta">
+              <div class="meta-item">📍 Concepción, Chile · Atención regional y remota</div>
+              <div class="meta-item">⚡ Electricidad, automatización, HVAC y energía</div>
+              <div class="meta-item">💻 Diseño web, IA, posicionamiento y herramientas digitales</div>
+              <div class="meta-item">☀️ Enfoque en eficiencia, fotovoltaica y mejora continua</div>
+            </div>
+
+            <div class="skills-cloud">
+              <span class="pill">Electricidad</span>
+              <span class="pill">Climatización</span>
+              <span class="pill">Automatización</span>
+              <span class="pill">Diseño web</span>
+              <span class="pill">IA aplicada</span>
+              <span class="pill">Fotovoltaica</span>
+            </div>
+          </aside>
+
+          <div class="story-card reveal">
+            <h3>De vender en la calle a modernizar negocios con soluciones completas</h3>
+            <p>Mi camino partió desde abajo, vendiendo productos en la calle y aprendiendo algo clave: las personas confían cuando alguien les habla claro, entiende su problema y propone una solución honesta.</p>
+            <p>Después entré al mundo técnico: electricidad, automatización, climatización, mantenimiento y proyectos en terreno. Ahí aprendí que un negocio no solo necesita vender; también necesita funcionar bien, operar seguro y tener sistemas confiables.</p>
+            <p>Con el tiempo uní esa experiencia con diseño web, inteligencia artificial y automatización comercial. Así nace MiPymeSmart: una propuesta para pymes que quieren verse mejor, atender mejor y modernizar su operación sin complicarse.</p>
+            <p>Mi enfoque es cercano y práctico. Primero entiendo el negocio, luego propongo una ruta clara y finalmente implemento soluciones que tengan sentido para el presupuesto, el rubro y la etapa en que está cada empresa.</p>
+
+            <div class="notice">
+              <strong>Promesa de trabajo:</strong> soluciones claras, ordenadas y útiles. Tecnología que se entiende, se usa y ayuda al negocio a crecer.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tight" id="planes">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Planes y paquetes</span>
+            <h2>Opciones pensadas para partir simple y crecer por etapas.</h2>
+          </div>
+          <p>Valores referenciales. Cada proyecto se ajusta según alcance, urgencia, materiales, integraciones y nivel de personalización.</p>
+        </div>
+
+        <div class="grid-4 pricing">
+          <article class="card price-card reveal">
+            <h3>Presencia Digital</h3>
+            <p>Para negocios que necesitan verse profesionales y captar contactos.</p>
+            <div class="price">$249.000 <span>CLP desde</span></div>
+            <ul class="features">
+              <li>Web de hasta 5 secciones</li>
+              <li>Diseño responsive</li>
+              <li>WhatsApp y formulario</li>
+              <li>Textos comerciales base</li>
+            </ul>
+            <a class="btn btn-secondary" href="#contacto">Cotizar</a>
+          </article>
+
+          <article class="card price-card featured reveal">
+            <span class="badge">Más completo</span>
+            <h3>Negocio Inteligente</h3>
+            <p>Para captar, responder y ordenar clientes con web e IA.</p>
+            <div class="price">$499.000 <span>CLP desde</span></div>
+            <ul class="features">
+              <li>Web profesional</li>
+              <li>Asistente IA inicial</li>
+              <li>Captura de prospectos</li>
+              <li>Automatización básica</li>
+            </ul>
+            <a class="btn btn-primary" href="#contacto">Solicitar</a>
+          </article>
+
+          <article class="card price-card reveal">
+            <h3>Modernización Técnica</h3>
+            <p>Para mejorar electricidad, climatización y operación del local.</p>
+            <div class="price">A evaluar <span>según visita</span></div>
+            <ul class="features">
+              <li>Diagnóstico técnico</li>
+              <li>Electricidad y tableros</li>
+              <li>Climatización</li>
+              <li>Recomendaciones de mejora</li>
+            </ul>
+            <a class="btn btn-secondary" href="#contacto">Evaluar</a>
+          </article>
+
+          <article class="card price-card reveal">
+            <h3>Proyecto Integral Pyme</h3>
+            <p>Para negocios que quieren una solución completa.</p>
+            <div class="price">A medida <span>por etapas</span></div>
+            <ul class="features">
+              <li>Web + IA</li>
+              <li>Electricidad</li>
+              <li>Climatización</li>
+              <li>Domótica y automatización</li>
+            </ul>
+            <a class="btn btn-secondary" href="#contacto">Agendar</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Preguntas frecuentes</span>
+            <h2>Respuestas claras para decidir sin enredarse.</h2>
+          </div>
+        </div>
+
+        <div class="faq reveal">
+          <div class="faq-item open">
+            <button class="faq-question" type="button">¿Esta empresa hace páginas web o servicios técnicos?<span class="faq-icon">−</span></button>
+            <div class="faq-answer">
+              <div><p>Hace ambas cosas, pero de forma ordenada: presencia digital para vender mejor y soluciones técnicas para que el negocio funcione mejor. La idea es modernizar el negocio completo, no solo hacer una página bonita.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button">¿Puedo partir solo con una página web?<span class="faq-icon">+</span></button>
+            <div class="faq-answer">
+              <div><p>Sí. Puedes partir con una web profesional y luego sumar IA, automatización, posicionamiento, electricidad, climatización o domótica según necesidad.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button">¿La IA queda funcionando de verdad?<span class="faq-icon">+</span></button>
+            <div class="faq-answer">
+              <div><p>Esta página incluye un chatbot demostrativo. Para tener IA real conectada a datos de la empresa se debe implementar una integración con una API y reglas de seguridad.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button">¿Atienden locales comerciales y pymes?<span class="faq-icon">+</span></button>
+            <div class="faq-answer">
+              <div><p>Sí. La propuesta está pensada para almacenes, oficinas, talleres, centros estéticos, restaurantes, servicios técnicos, tiendas, profesionales independientes y empresas locales.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button">¿Se puede hacer una propuesta por etapas?<span class="faq-icon">+</span></button>
+            <div class="faq-answer">
+              <div><p>Sí. De hecho, es lo más recomendable. Primero se resuelve lo urgente y luego se avanza hacia automatización, IA, eficiencia y mejoras técnicas.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contacto">
+      <div class="container">
+        <div class="cta reveal">
+          <div>
+            <span class="eyebrow">Contacto</span>
+            <h2>Agenda un diagnóstico para modernizar tu negocio.</h2>
+            <p class="lead">Cuéntame qué tienes hoy y qué quieres mejorar. Revisaremos si necesitas web, IA, electricidad, climatización, automatización o un proyecto integral.</p>
+          </div>
+          <a class="btn btn-primary" href="https://wa.me/56977532697?text=Hola%2C%20quiero%20solicitar%20un%20diagn%C3%B3stico%20para%20modernizar%20mi%20negocio." target="_blank" rel="noopener">Hablar por WhatsApp</a>
+        </div>
+
+        <div class="diagnostic">
+          <form class="card reveal" id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" name="nombre" type="text" placeholder="Tu nombre" required />
+              </div>
+              <div class="form-group">
+                <label for="negocio">Negocio</label>
+                <input id="negocio" name="negocio" type="text" placeholder="Nombre del negocio" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input id="telefono" name="telefono" type="tel" placeholder="+56 9 ..." required />
+              </div>
+              <div class="form-group">
+                <label for="servicio">Qué necesitas</label>
+                <select id="servicio" name="servicio">
+                  <option>Diagnóstico integral</option>
+                  <option>Diseño web</option>
+                  <option>Web + IA</option>
+                  <option>Electricidad</option>
+                  <option>Climatización</option>
+                  <option>Domótica / automatización</option>
+                  <option>Proyecto fotovoltaico</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="urgencia">Urgencia</label>
+                <select id="urgencia" name="urgencia">
+                  <option>Estoy cotizando</option>
+                  <option>Lo necesito este mes</option>
+                  <option>Es urgente</option>
+                  <option>Quiero planificar por etapas</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="tamano">Tipo de negocio</label>
+                <select id="tamano" name="tamano">
+                  <option>Pyme / local comercial</option>
+                  <option>Empresa de servicios</option>
+                  <option>Oficina</option>
+                  <option>Taller / bodega</option>
+                  <option>Profesional independiente</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="mensaje">Mensaje</label>
+              <textarea id="mensaje" name="mensaje" placeholder="Cuéntame qué quieres mejorar: ventas, página web, electricidad, climatización, automatización, IA, etc."></textarea>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Enviar por WhatsApp</button>
+            <p class="small" style="margin-top: 12px;">El formulario genera un mensaje listo para enviar por WhatsApp.</p>
+          </form>
+
+          <div class="diagnostic-result reveal">
+            <span class="pill">Diagnóstico recomendado</span>
+            <div class="result-number" id="diagnosticScore">360°</div>
+            <p id="diagnosticText">Para negocios que quieren crecer, lo ideal es revisar presencia digital, operación técnica y oportunidades de automatización.</p>
+            <div class="automation-list">
+              <div class="value-item">
+                <span class="check">✓</span>
+                <p>Revisión de oportunidades digitales y comerciales.</p>
+              </div>
+              <div class="value-item">
+                <span class="check">✓</span>
+                <p>Revisión inicial de necesidades técnicas del local.</p>
+              </div>
+              <div class="value-item">
+                <span class="check">✓</span>
+                <p>Propuesta por etapas según presupuesto y prioridad.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="logo" href="#inicio">
+          <span class="logo-mark"><span>MS</span></span>
+          <span class="brand-word"><strong>MiPyme</strong><span>Smart</span></span>
+        </a>
+        <p style="margin-top: 14px;">Web, IA, electricidad, climatización, domótica y automatización para negocios que quieren crecer y operar mejor.</p>
+        <p class="small" style="margin-top: 18px;">© <span id="year"></span> MiPymeSmart. Desarrollado por Damián Parra.</p>
+      </div>
+
+      <div>
+        <h3>Soluciones</h3>
+        <div class="footer-links">
+          <a href="#soluciones">Diseño web</a>
+          <a href="#soluciones">Electricidad</a>
+          <a href="#soluciones">Climatización</a>
+          <a href="#automatizacion">Automatización</a>
+          <a href="#portafolio">Portafolio</a>
+          <a href="#redes">Redes y WhatsApp QR</a>
+        </div>
+      </div>
+
+      <div>
+        <h3>Contacto</h3>
+        <div class="footer-links">
+          <a href="https://wa.me/56977532697" target="_blank" rel="noopener">WhatsApp: +56 9 7753 2697</a>
+          <a href="mailto:alexisparraulloa@gmail.com">alexisparraulloa@gmail.com</a>
+          <span>Concepción, Chile</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+    <div class="theme-switcher" aria-label="Cambiar ambiente visual">
+    <button class="theme-dot active" type="button" data-theme="smart-green" aria-label="Tema verde inteligente"></button>
+    <button class="theme-dot" type="button" data-theme="soft-green" aria-label="Tema verde claro"></button>
+    <button class="theme-dot" type="button" data-theme="tech-blue" aria-label="Tema azul tecnológico"></button>
+    <button class="theme-dot" type="button" data-theme="premium-dark" aria-label="Tema oscuro premium"></button>
+  </div>
+
+<a class="wa-float" href="https://wa.me/56977532697?text=Hola%2C%20quiero%20solicitar%20un%20diagnóstico%20con%20MiPymeSmart." target="_blank" rel="noopener" aria-label="Contactar por WhatsApp"><span>☏</span><strong>WhatsApp</strong></a>
+
+  <div class="ai-chat" id="aiChat">
+    <div class="chat-window" id="chatWindow" aria-label="Chatbot de MiPymeSmart">
+      <div class="chat-head">
+        <div>
+          <strong>Asistente MiPymeSmart</strong>
+          <span>Demo IA · Responde orientación básica</span>
+        </div>
+        <button class="chat-close" id="chatClose" type="button" aria-label="Cerrar chat">×</button>
+      </div>
+
+      <div class="chat-body" id="chatBody">
+        <div class="msg bot">Hola 👋 Soy el asistente de MiPymeSmart. Puedo orientarte sobre web, IA, electricidad, climatización o automatización.</div>
+        <div class="msg bot">Para una IA real conectada a tus datos se puede implementar después con API y backend seguro.</div>
+      </div>
+
+      <div class="quick-replies">
+        <button type="button" data-reply="Necesito una página web">Web</button>
+        <button type="button" data-reply="Quiero automatizar mi negocio">Automatización</button>
+        <button type="button" data-reply="Necesito revisar electricidad">Electricidad</button>
+        <button type="button" data-reply="Necesito climatización">Climatización</button>
+      </div>
+
+      <form class="chat-form" id="chatForm">
+        <input id="chatInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+        <button type="submit" aria-label="Enviar mensaje">→</button>
+      </form>
+    </div>
+
+    <button class="chat-toggle" id="chatToggle" type="button" aria-label="Abrir chatbot">🤖</button>
+  </div>
+
+  <button class="to-top" id="toTop" type="button" aria-label="Volver arriba">↑</button>
+  <script src="js/main.js"></script>
+</body>
+</html>
