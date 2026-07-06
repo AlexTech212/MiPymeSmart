@@ -424,39 +424,55 @@ const themes = {
 
 
 
-    // Tarjetas movibles v6:
-    // Versión segura: primero se ven normal; luego se activan abajo del panel principal.
-    // Se pueden arrastrar, lanzar con impulso, rebotan y muestran efecto visual al chocar.
-    function initMovableHeroCards() {
-      const panel = document.querySelector(".hero-panel");
-      if (!panel) return;
+    // Tarjetas flotantes globales v7:
+    // Salen del recuadro transparente del hero y se pueden lanzar por la portada y soluciones.
+    function initGlobalFloatingCards() {
+      const hero = document.querySelector("#inicio");
+      const solutions = document.querySelector("#soluciones");
+      const originalPanel = document.querySelector(".hero-panel");
+      const trustRow = document.querySelector(".trust-row");
+      const stats = document.querySelector(".stats");
 
-      const systemWindow = panel.querySelector(".system-window");
+      if (!hero || !solutions || !originalPanel) return;
+
       const cards = [
-        panel.querySelector(".floating-metric"),
-        panel.querySelector(".chat-preview")
+        originalPanel.querySelector(".floating-metric"),
+        originalPanel.querySelector(".chat-preview")
       ].filter(Boolean);
 
-      if (!systemWindow || cards.length < 2) return;
+      if (cards.length < 2) return;
 
       const states = new Map();
       let frame = null;
       const margin = 18;
-      const gapBelowWindow = 24;
 
       function clamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
       }
 
-      function getPlayAreaTop() {
-        return systemWindow.offsetTop + systemWindow.offsetHeight + gapBelowWindow;
+      function getHeaderHeight() {
+        const header = document.querySelector(".site-header");
+        return header ? Math.ceil(header.getBoundingClientRect().height) : 76;
       }
 
-      function getBounds(card) {
+      function getPlayBounds(card) {
+        const heroRect = hero.getBoundingClientRect();
+        const solutionsRect = solutions.getBoundingClientRect();
+        const pageTop = window.pageYOffset;
+        const headerHeight = getHeaderHeight();
+
         const minX = margin;
-        const maxX = Math.max(margin, panel.clientWidth - card.offsetWidth - margin);
-        const minY = getPlayAreaTop();
-        const maxY = Math.max(minY, panel.clientHeight - card.offsetHeight - margin);
+        const maxX = Math.max(margin, window.innerWidth - card.offsetWidth - margin);
+
+        const minY = Math.max(
+          heroRect.top + pageTop + headerHeight + 16,
+          pageTop + headerHeight + 16
+        );
+
+        const maxY = Math.max(
+          minY,
+          solutionsRect.bottom + pageTop - card.offsetHeight - margin
+        );
 
         return { minX, maxX, minY, maxY };
       }
@@ -468,57 +484,75 @@ const themes = {
           state.y = y;
         }
 
-        card.style.setProperty("--card-left", `${x}px`);
-        card.style.setProperty("--card-top", `${y}px`);
+        card.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       }
 
-      function updatePanelHeight() {
-        const playTop = getPlayAreaTop();
-        const tallestCard = Math.max(...cards.map(card => card.offsetHeight || 120));
-        const desiredHeight = playTop + tallestCard + 52;
-        panel.style.minHeight = `${desiredHeight}px`;
+      function getInitialY() {
+        const pageTop = window.pageYOffset;
+
+        // Ubicación inicial bajo los textos de confianza y cerca de estadísticas,
+        // fuera del recuadro transparente del hero.
+        if (stats) {
+          const statsRect = stats.getBoundingClientRect();
+          return statsRect.bottom + pageTop + 24;
+        }
+
+        if (trustRow) {
+          const trustRect = trustRow.getBoundingClientRect();
+          return trustRect.bottom + pageTop + 30;
+        }
+
+        const heroRect = hero.getBoundingClientRect();
+        return heroRect.top + pageTop + 520;
       }
 
       function placeInitialCards(force = false) {
-        panel.classList.add("cards-game-enabled");
+        cards.forEach((card, index) => {
+          if (!card.classList.contains("global-game-card")) {
+            card.classList.add("global-game-card");
+            document.body.appendChild(card);
+          }
 
-        requestAnimationFrame(() => {
-          updatePanelHeight();
+          let state = states.get(card);
 
-          cards.forEach((card, index) => {
-            let state = states.get(card);
+          if (!state) {
+            state = {
+              x: 0,
+              y: 0,
+              vx: 0,
+              vy: 0,
+              dragging: false,
+              pointerId: null,
+              grabX: 0,
+              grabY: 0,
+              lastX: 0,
+              lastY: 0,
+              lastT: 0,
+              homeX: 0,
+              homeY: 0,
+              placed: false
+            };
+            states.set(card, state);
+          }
 
-            if (!state) {
-              state = {
-                x: 0,
-                y: 0,
-                vx: 0,
-                vy: 0,
-                dragging: false,
-                pointerId: null,
-                grabX: 0,
-                grabY: 0,
-                lastX: 0,
-                lastY: 0,
-                lastT: 0,
-                homeX: 0,
-                homeY: 0
-              };
-              states.set(card, state);
-            }
+          if (!force && state.placed) return;
 
-            if (!force && (state.dragging || state.hasBeenPlaced)) return;
+          const bounds = getPlayBounds(card);
+          const baseY = clamp(getInitialY(), bounds.minY, bounds.maxY);
+          const firstX = Math.min(36, bounds.maxX);
+          const secondX = Math.min(firstX + cards[0].offsetWidth + 22, bounds.maxX);
+          const fallbackSecondX = bounds.maxX;
 
-            const bounds = getBounds(card);
-            const homeX = index === 0 ? bounds.minX : bounds.maxX;
-            const homeY = bounds.minY;
+          const homeX = index === 0 ? firstX : (secondX < bounds.maxX ? secondX : fallbackSecondX);
+          const homeY = index === 0 ? baseY : Math.min(baseY + 14, bounds.maxY);
 
-            state.homeX = homeX;
-            state.homeY = homeY;
-            state.hasBeenPlaced = true;
+          state.homeX = homeX;
+          state.homeY = homeY;
+          state.placed = true;
+          state.vx = 0;
+          state.vy = 0;
 
-            setPosition(card, homeX, homeY);
-          });
+          setPosition(card, homeX, homeY);
         });
       }
 
@@ -528,10 +562,10 @@ const themes = {
         card.classList.add("corner-hit");
 
         const dot = document.createElement("span");
-        dot.className = "impact-dot";
+        dot.className = "global-impact-dot";
         dot.style.left = `${x}px`;
         dot.style.top = `${y}px`;
-        panel.appendChild(dot);
+        document.body.appendChild(dot);
 
         setTimeout(() => dot.remove(), 650);
       }
@@ -549,7 +583,7 @@ const themes = {
             return;
           }
 
-          const bounds = getBounds(card);
+          const bounds = getPlayBounds(card);
 
           state.x += state.vx;
           state.y += state.vy;
@@ -605,12 +639,10 @@ const themes = {
           const state = states.get(card);
           if (!state) return;
 
-          const panelRect = panel.getBoundingClientRect();
-
           state.dragging = true;
           state.pointerId = event.pointerId;
-          state.grabX = event.clientX - panelRect.left - state.x;
-          state.grabY = event.clientY - panelRect.top - state.y;
+          state.grabX = event.clientX - state.x;
+          state.grabY = event.clientY - state.y;
           state.lastX = event.clientX;
           state.lastY = event.clientY;
           state.lastT = performance.now();
@@ -625,13 +657,12 @@ const themes = {
           const state = states.get(card);
           if (!state || !state.dragging || state.pointerId !== event.pointerId) return;
 
-          const panelRect = panel.getBoundingClientRect();
-          const bounds = getBounds(card);
+          const bounds = getPlayBounds(card);
           const now = performance.now();
           const dt = Math.max(now - state.lastT, 16);
 
-          let nextX = event.clientX - panelRect.left - state.grabX;
-          let nextY = event.clientY - panelRect.top - state.grabY;
+          let nextX = event.clientX - state.grabX;
+          let nextY = event.clientY - state.grabY;
 
           nextX = clamp(nextX, bounds.minX, bounds.maxX);
           nextY = clamp(nextY, bounds.minY, bounds.maxY);
@@ -651,8 +682,8 @@ const themes = {
 
           state.dragging = false;
           state.pointerId = null;
-          state.vx = clamp(state.vx, -20, 20);
-          state.vy = clamp(state.vy, -20, 20);
+          state.vx = clamp(state.vx, -22, 22);
+          state.vy = clamp(state.vy, -22, 22);
 
           card.classList.remove("is-dragging");
 
@@ -679,14 +710,15 @@ const themes = {
       window.addEventListener("resize", () => {
         cards.forEach(card => {
           const state = states.get(card);
-          if (state) state.hasBeenPlaced = false;
+          if (state) state.placed = false;
         });
         placeInitialCards(true);
       });
 
-      placeInitialCards();
+      // Espera un poco para medir bien la maquetación.
+      setTimeout(() => placeInitialCards(), 120);
     }
 
-    window.addEventListener("DOMContentLoaded", initMovableHeroCards);
+    window.addEventListener("DOMContentLoaded", initGlobalFloatingCards);
 
     document.getElementById("year").textContent = new Date().getFullYear();

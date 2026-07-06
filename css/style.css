@@ -1884,59 +1884,59 @@
       }
     }
 
-    /* Interacción segura v6:
-       Las tarjetas se mantienen visibles siempre.
-       Por defecto se ven bajo el panel; cuando JS carga se transforman en tarjetas movibles
-       dentro de una zona inferior para no tapar el contenido superior. */
-    .hero-panel.cards-game-enabled {
-      position: relative;
+    /* Interacción global v7:
+       Las tarjetas flotantes salen del recuadro transparente del hero.
+       El recuadro superior termina donde termina su propio contenido.
+       Las tarjetas pueden moverse por la zona principal + soluciones. */
+    .hero-panel {
+      min-height: auto;
       display: block;
-      overflow: hidden;
-      padding-bottom: 24px;
     }
 
-    .hero-panel.cards-game-enabled .system-window {
+    .hero-panel .system-window {
       position: relative;
       z-index: 1;
     }
 
-    .hero-panel.cards-game-enabled .floating-metric,
-    .hero-panel.cards-game-enabled .chat-preview {
-      position: absolute;
-      left: var(--card-left, 18px);
-      top: var(--card-top, 420px);
-      right: auto;
-      bottom: auto;
-      width: min(282px, calc(100% - 36px));
+    .hero-panel .floating-metric,
+    .hero-panel .chat-preview {
+      display: none;
+    }
+
+    .global-game-card {
+      position: absolute !important;
+      display: block !important;
+      left: 0;
+      top: 0;
+      right: auto !important;
+      bottom: auto !important;
+      width: min(292px, calc(100vw - 36px));
       height: auto;
-      margin-top: 0;
-      z-index: 8;
+      margin: 0 !important;
+      z-index: 72;
       cursor: grab;
       touch-action: none;
       user-select: none;
-      will-change: left, top, transform;
+      will-change: transform;
       transition: box-shadow .18s ease, border-color .18s ease, filter .18s ease;
     }
 
-    .hero-panel.cards-game-enabled .chat-preview {
-      width: min(336px, calc(100% - 36px));
+    .global-game-card.chat-preview {
+      width: min(350px, calc(100vw - 36px));
     }
 
-    .hero-panel.cards-game-enabled .floating-metric.is-dragging,
-    .hero-panel.cards-game-enabled .chat-preview.is-dragging {
+    .global-game-card.is-dragging {
       cursor: grabbing;
       border-color: rgba(25,243,182,.58);
       box-shadow: 0 28px 80px rgba(25,243,182,.18), 0 0 0 1px rgba(255,255,255,.14) inset;
       filter: brightness(1.08);
     }
 
-    .hero-panel.cards-game-enabled .floating-metric.corner-hit,
-    .hero-panel.cards-game-enabled .chat-preview.corner-hit {
-      animation: cardHitPulse .38s ease;
+    .global-game-card.corner-hit {
+      animation: globalCardPulse .38s ease;
     }
 
-    .hero-panel.cards-game-enabled .floating-metric::after,
-    .hero-panel.cards-game-enabled .chat-preview::after {
+    .global-game-card::after {
       content: "Arrástrame";
       position: absolute;
       top: -12px;
@@ -1955,27 +1955,25 @@
       box-shadow: 0 12px 28px rgba(0,0,0,.18);
     }
 
-    .hero-panel.cards-game-enabled .floating-metric:hover::after,
-    .hero-panel.cards-game-enabled .chat-preview:hover::after,
-    .hero-panel.cards-game-enabled .floating-metric.is-dragging::after,
-    .hero-panel.cards-game-enabled .chat-preview.is-dragging::after {
+    .global-game-card:hover::after,
+    .global-game-card.is-dragging::after {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .impact-dot {
+    .global-impact-dot {
       position: absolute;
-      z-index: 7;
+      z-index: 71;
       width: 10px;
       height: 10px;
       border-radius: 999px;
       background: var(--brand-2);
       box-shadow: 0 0 18px rgba(25,243,182,.9);
       pointer-events: none;
-      animation: impactPop .55s ease-out forwards;
+      animation: globalImpactPop .55s ease-out forwards;
     }
 
-    @keyframes impactPop {
+    @keyframes globalImpactPop {
       from {
         opacity: .95;
         transform: translate(-50%, -50%) scale(.35);
@@ -1987,29 +1985,27 @@
       }
     }
 
-    @keyframes cardHitPulse {
+    @keyframes globalCardPulse {
       0% {
-        transform: scale(1);
+        filter: brightness(1);
       }
 
       45% {
-        transform: scale(1.025);
-        filter: brightness(1.22);
+        filter: brightness(1.26);
       }
 
       100% {
-        transform: scale(1);
+        filter: brightness(1);
       }
     }
 
     @media (max-width: 760px) {
-      .hero-panel.cards-game-enabled .floating-metric,
-      .hero-panel.cards-game-enabled .chat-preview {
-        width: calc(100% - 28px);
+      .global-game-card,
+      .global-game-card.chat-preview {
+        width: calc(100vw - 32px);
       }
 
-      .hero-panel.cards-game-enabled .floating-metric::after,
-      .hero-panel.cards-game-enabled .chat-preview::after {
+      .global-game-card::after {
         content: "Mover";
       }
     }
