@@ -422,18 +422,16 @@ const themes = {
       });
     }
 
-
-
-    // Tarjetas flotantes globales v7:
-    // Salen del recuadro transparente del hero y se pueden lanzar por la portada y soluciones.
-    function initGlobalFloatingCards() {
+    // Viñetas hero-only v10:
+    // Se mueven solo dentro de la página principal (#inicio).
+    // No siguen al usuario hacia Soluciones u otras secciones.
+    // Al cambiar de sección vuelven a reposo en Inicio.
+    function initHeroOnlyFloatingCards() {
       const hero = document.querySelector("#inicio");
-      const solutions = document.querySelector("#soluciones");
       const originalPanel = document.querySelector(".hero-panel");
-      const trustRow = document.querySelector(".trust-row");
-      const stats = document.querySelector(".stats");
+      const systemWindow = document.querySelector(".hero-panel .system-window");
 
-      if (!hero || !solutions || !originalPanel) return;
+      if (!hero || !originalPanel || !systemWindow) return;
 
       const cards = [
         originalPanel.querySelector(".floating-metric"),
@@ -442,39 +440,74 @@ const themes = {
 
       if (cards.length < 2) return;
 
+      const layer = document.createElement("div");
+      layer.className = "hero-game-layer";
+      hero.appendChild(layer);
+
       const states = new Map();
       let frame = null;
+      let resetTimer = null;
       const margin = 18;
 
       function clamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
       }
 
-      function getHeaderHeight() {
-        const header = document.querySelector(".site-header");
-        return header ? Math.ceil(header.getBoundingClientRect().height) : 76;
+      function getHeroRectPage() {
+        const rect = hero.getBoundingClientRect();
+        return {
+          left: rect.left + window.pageXOffset,
+          top: rect.top + window.pageYOffset,
+          width: rect.width,
+          height: rect.height
+        };
       }
 
-      function getPlayBounds(card) {
-        const heroRect = hero.getBoundingClientRect();
-        const solutionsRect = solutions.getBoundingClientRect();
-        const pageTop = window.pageYOffset;
-        const headerHeight = getHeaderHeight();
+      function getBounds(card) {
+        const heroBox = getHeroRectPage();
 
+        // Coordenadas relativas al hero.
         const minX = margin;
-        const maxX = Math.max(margin, window.innerWidth - card.offsetWidth - margin);
-
-        const minY = Math.max(
-          heroRect.top + pageTop + headerHeight + 16,
-          pageTop + headerHeight + 16
-        );
-
-        const maxY = Math.max(
-          minY,
-          solutionsRect.bottom + pageTop - card.offsetHeight - margin
-        );
+        const maxX = Math.max(margin, heroBox.width - card.offsetWidth - margin);
+        const minY = margin;
+        const maxY = Math.max(minY, heroBox.height - card.offsetHeight - margin);
 
         return { minX, maxX, minY, maxY };
+      }
+
+      function getHomePositions() {
+        const heroBox = getHeroRectPage();
+        const systemRect = systemWindow.getBoundingClientRect();
+        const systemLeft = systemRect.left + window.pageXOffset - heroBox.left;
+        const systemRight = systemRect.right + window.pageXOffset - heroBox.left;
+        const systemBottom = systemRect.bottom + window.pageYOffset - heroBox.top;
+
+        const baseY = systemBottom + 24;
+
+        return cards.map((card, index) => {
+          const bounds = getBounds(card);
+          const isMobile = window.innerWidth <= 760;
+
+          let x;
+          let y;
+
+          if (isMobile) {
+            x = clamp((heroBox.width - card.offsetWidth) / 2, bounds.minX, bounds.maxX);
+            y = baseY + index * (card.offsetHeight + 14);
+          } else {
+            // Reposo: bajo el recuadro Sistema, una a cada lado.
+            x = index === 0
+              ? clamp(systemLeft + 8, bounds.minX, bounds.maxX)
+              : clamp(systemRight - card.offsetWidth - 8, bounds.minX, bounds.maxX);
+
+            y = baseY;
+          }
+
+          return {
+            x: clamp(x, bounds.minX, bounds.maxX),
+            y: clamp(y, bounds.minY, bounds.maxY)
+          };
+        });
       }
 
       function setPosition(card, x, y) {
@@ -487,34 +520,22 @@ const themes = {
         card.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       }
 
-      function getInitialY(card, index) {
-        const pageTop = window.pageYOffset;
+      function ensureHeroHasRoom() {
+        const homes = getHomePositions();
+        const neededBottom = Math.max(
+          ...homes.map((home, index) => home.y + cards[index].offsetHeight)
+        ) + 34;
 
-        // Ubicación inicial al lado de las estadísticas, no debajo de ellas.
-        // Así no crea sensación de espacio extra hacia abajo.
-        if (stats) {
-          const statsRect = stats.getBoundingClientRect();
-          const statsTop = statsRect.top + pageTop;
-          const chatOffset = index === 1 ? -24 : 116;
-          return statsTop + chatOffset;
+        if (neededBottom > hero.clientHeight) {
+          hero.style.minHeight = `${neededBottom}px`;
         }
-
-        if (trustRow) {
-          const trustRect = trustRow.getBoundingClientRect();
-          return trustRect.bottom + pageTop + (index === 1 ? 22 : 154);
-        }
-
-        const heroRect = hero.getBoundingClientRect();
-        return heroRect.top + pageTop + (index === 1 ? 460 : 600);
       }
 
-      function placeInitialCards(force = false) {
-        cards.forEach((card, index) => {
-          if (!card.classList.contains("global-game-card")) {
-            card.classList.add("global-game-card");
-            document.body.appendChild(card);
-          }
+      function moveToHome(animated = true) {
+        ensureHeroHasRoom();
+        const homes = getHomePositions();
 
+        cards.forEach((card, index) => {
           let state = states.get(card);
 
           if (!state) {
@@ -530,35 +551,36 @@ const themes = {
               lastX: 0,
               lastY: 0,
               lastT: 0,
-              homeX: 0,
-              homeY: 0,
-              placed: false
+              homeX: homes[index].x,
+              homeY: homes[index].y
             };
             states.set(card, state);
           }
 
-          if (!force && state.placed) return;
-
-          const bounds = getPlayBounds(card);
-          const baseY = clamp(getInitialY(card, index), bounds.minY, bounds.maxY);
-
-          // En escritorio quedan al lado derecho de las estadísticas, como viñetas flotantes.
-          // En pantallas pequeñas quedan centradas para no tapar contenido.
-          const isMobile = window.innerWidth <= 760;
-          const rightColumnX = Math.max(bounds.minX, bounds.maxX - 12);
-          const mobileX = Math.max(bounds.minX, Math.min(bounds.maxX, (window.innerWidth - card.offsetWidth) / 2));
-
-          const homeX = isMobile ? mobileX : rightColumnX;
-          const homeY = baseY;
-
-          state.homeX = homeX;
-          state.homeY = homeY;
-          state.placed = true;
+          state.homeX = homes[index].x;
+          state.homeY = homes[index].y;
           state.vx = 0;
           state.vy = 0;
+          state.dragging = false;
 
-          setPosition(card, homeX, homeY);
+          if (animated) {
+            card.style.transition = "transform .55s cubic-bezier(.22, 1, .36, 1), box-shadow .18s ease, border-color .18s ease, filter .18s ease";
+            setPosition(card, state.homeX, state.homeY);
+            setTimeout(() => {
+              card.style.transition = "box-shadow .18s ease, border-color .18s ease, filter .18s ease";
+            }, 580);
+          } else {
+            setPosition(card, state.homeX, state.homeY);
+          }
         });
+      }
+
+      function placeInitialCards() {
+        cards.forEach(card => {
+          layer.appendChild(card);
+        });
+
+        requestAnimationFrame(() => moveToHome(false));
       }
 
       function showImpact(card, x, y) {
@@ -567,10 +589,10 @@ const themes = {
         card.classList.add("corner-hit");
 
         const dot = document.createElement("span");
-        dot.className = "global-impact-dot";
+        dot.className = "hero-impact-dot";
         dot.style.left = `${x}px`;
         dot.style.top = `${y}px`;
-        document.body.appendChild(dot);
+        layer.appendChild(dot);
 
         setTimeout(() => dot.remove(), 650);
       }
@@ -588,7 +610,7 @@ const themes = {
             return;
           }
 
-          const bounds = getPlayBounds(card);
+          const bounds = getBounds(card);
 
           state.x += state.vx;
           state.y += state.vy;
@@ -644,10 +666,14 @@ const themes = {
           const state = states.get(card);
           if (!state) return;
 
+          card.style.transition = "box-shadow .18s ease, border-color .18s ease, filter .18s ease";
+
+          const heroBox = getHeroRectPage();
+
           state.dragging = true;
           state.pointerId = event.pointerId;
-          state.grabX = event.clientX - state.x;
-          state.grabY = event.clientY - state.y;
+          state.grabX = event.clientX + window.pageXOffset - heroBox.left - state.x;
+          state.grabY = event.clientY + window.pageYOffset - heroBox.top - state.y;
           state.lastX = event.clientX;
           state.lastY = event.clientY;
           state.lastT = performance.now();
@@ -662,12 +688,13 @@ const themes = {
           const state = states.get(card);
           if (!state || !state.dragging || state.pointerId !== event.pointerId) return;
 
-          const bounds = getPlayBounds(card);
+          const heroBox = getHeroRectPage();
+          const bounds = getBounds(card);
           const now = performance.now();
           const dt = Math.max(now - state.lastT, 16);
 
-          let nextX = event.clientX - state.grabX;
-          let nextY = event.clientY - state.grabY;
+          let nextX = event.clientX + window.pageXOffset - heroBox.left - state.grabX;
+          let nextY = event.clientY + window.pageYOffset - heroBox.top - state.grabY;
 
           nextX = clamp(nextX, bounds.minX, bounds.maxX);
           nextY = clamp(nextY, bounds.minY, bounds.maxY);
@@ -702,28 +729,31 @@ const themes = {
         card.addEventListener("pointerup", releaseCard);
         card.addEventListener("pointercancel", releaseCard);
 
-        card.addEventListener("dblclick", () => {
-          const state = states.get(card);
-          if (!state) return;
-
-          state.vx = 0;
-          state.vy = 0;
-          setPosition(card, state.homeX, state.homeY);
-        });
+        // Doble clic: volver al reposo.
+        card.addEventListener("dblclick", () => moveToHome(true));
       });
+
+      function resetCardsWhenLeavingHero() {
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => moveToHome(true), 500);
+      }
+
+      // Al cambiar a Soluciones, Portafolio o cualquier sección, vuelven al Inicio/reposo.
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", () => resetCardsWhenLeavingHero());
+      });
+
+      window.addEventListener("hashchange", resetCardsWhenLeavingHero);
 
       window.addEventListener("resize", () => {
-        cards.forEach(card => {
-          const state = states.get(card);
-          if (state) state.placed = false;
-        });
-        placeInitialCards(true);
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => moveToHome(true), 250);
       });
 
-      // Espera un poco para medir bien la maquetación.
-      setTimeout(() => placeInitialCards(), 120);
+      setTimeout(placeInitialCards, 120);
     }
 
-    window.addEventListener("DOMContentLoaded", initGlobalFloatingCards);
+    window.addEventListener("DOMContentLoaded", initHeroOnlyFloatingCards);
+
 
     document.getElementById("year").textContent = new Date().getFullYear();

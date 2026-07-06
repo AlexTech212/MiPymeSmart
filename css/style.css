@@ -1884,60 +1884,62 @@
       }
     }
 
-    /* Interacción global v7:
-       Las tarjetas flotantes salen del recuadro transparente del hero.
-       El recuadro superior termina donde termina su propio contenido.
-       Las tarjetas pueden moverse por la zona principal + soluciones. */
-    .hero-panel {
-      min-height: auto;
-      display: block;
-    }
-
-    .hero-panel .system-window {
+    /* Viñetas hero-only v10:
+       Las viñetas solo existen y se mueven dentro de la página principal.
+       Al bajar a Soluciones u otra sección, se quedan arriba en Inicio y no siguen al usuario. */
+    #inicio {
       position: relative;
-      z-index: 1;
+      overflow: visible;
     }
 
-    .hero-panel .floating-metric,
-    .hero-panel .chat-preview {
-      display: none;
+    .hero-game-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      overflow: visible;
     }
 
-    .global-game-card {
+    .hero-game-layer .floating-metric,
+    .hero-game-layer .chat-preview {
       position: absolute !important;
       display: block !important;
       left: 0;
       top: 0;
       right: auto !important;
       bottom: auto !important;
+      margin: 0 !important;
       width: min(292px, calc(100vw - 36px));
       height: auto;
-      margin: 0 !important;
-      z-index: 72;
+      z-index: 22;
       cursor: grab;
       touch-action: none;
       user-select: none;
+      pointer-events: auto;
       will-change: transform;
       transition: box-shadow .18s ease, border-color .18s ease, filter .18s ease;
     }
 
-    .global-game-card.chat-preview {
-      width: min(350px, calc(100vw - 36px));
+    .hero-game-layer .chat-preview {
+      width: min(352px, calc(100vw - 36px));
     }
 
-    .global-game-card.is-dragging {
+    .hero-game-layer .floating-metric.is-dragging,
+    .hero-game-layer .chat-preview.is-dragging {
       cursor: grabbing;
       border-color: rgba(25,243,182,.58);
       box-shadow: 0 28px 80px rgba(25,243,182,.18), 0 0 0 1px rgba(255,255,255,.14) inset;
       filter: brightness(1.08);
     }
 
-    .global-game-card.corner-hit {
-      animation: globalCardPulse .38s ease;
+    .hero-game-layer .floating-metric.corner-hit,
+    .hero-game-layer .chat-preview.corner-hit {
+      animation: heroCardPulse .38s ease;
     }
 
-    .global-game-card::after {
-      content: "Arrástrame";
+    .hero-game-layer .floating-metric::after,
+    .hero-game-layer .chat-preview::after {
+      content: "Lánzame";
       position: absolute;
       top: -12px;
       right: 14px;
@@ -1955,25 +1957,27 @@
       box-shadow: 0 12px 28px rgba(0,0,0,.18);
     }
 
-    .global-game-card:hover::after,
-    .global-game-card.is-dragging::after {
+    .hero-game-layer .floating-metric:hover::after,
+    .hero-game-layer .chat-preview:hover::after,
+    .hero-game-layer .floating-metric.is-dragging::after,
+    .hero-game-layer .chat-preview.is-dragging::after {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .global-impact-dot {
+    .hero-impact-dot {
       position: absolute;
-      z-index: 71;
+      z-index: 21;
       width: 10px;
       height: 10px;
       border-radius: 999px;
       background: var(--brand-2);
       box-shadow: 0 0 18px rgba(25,243,182,.9);
       pointer-events: none;
-      animation: globalImpactPop .55s ease-out forwards;
+      animation: heroImpactPop .55s ease-out forwards;
     }
 
-    @keyframes globalImpactPop {
+    @keyframes heroImpactPop {
       from {
         opacity: .95;
         transform: translate(-50%, -50%) scale(.35);
@@ -1985,7 +1989,7 @@
       }
     }
 
-    @keyframes globalCardPulse {
+    @keyframes heroCardPulse {
       0% {
         filter: brightness(1);
       }
@@ -2000,102 +2004,14 @@
     }
 
     @media (max-width: 760px) {
-      .global-game-card,
-      .global-game-card.chat-preview {
+      .hero-game-layer .floating-metric,
+      .hero-game-layer .chat-preview {
         width: calc(100vw - 32px);
       }
 
-      .global-game-card::after {
+      .hero-game-layer .floating-metric::after,
+      .hero-game-layer .chat-preview::after {
         content: "Mover";
-      }
-    }
-
-    /* Accesos rápidos arriba del panel del hero: TikTok + WhatsApp */
-    .hero-quick-actions {
-      position: relative;
-      z-index: 3;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-      margin: 0 4px 12px;
-    }
-
-    .quick-social {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      min-height: 34px;
-      padding: 8px 11px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--soft);
-      background: rgba(5,9,15,.55);
-      backdrop-filter: blur(14px);
-      font-size: 12px;
-      font-weight: 950;
-      box-shadow: 0 12px 26px rgba(0,0,0,.16);
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-    }
-
-    .quick-social:hover {
-      transform: translateY(-2px);
-      border-color: rgba(25,243,182,.42);
-      background: rgba(255,255,255,.11);
-    }
-
-    .quick-social span {
-      width: 19px;
-      height: 19px;
-      display: grid;
-      place-items: center;
-      border-radius: 999px;
-      color: #031016;
-      background: linear-gradient(90deg, var(--brand), var(--brand-2));
-      font-size: 12px;
-      line-height: 1;
-    }
-
-    .quick-social small {
-      color: inherit;
-      font-size: 12px;
-      font-weight: 950;
-    }
-
-    .quick-tiktok span {
-      background: linear-gradient(135deg, #ffffff, #37d6ff 48%, #ff3b7f);
-    }
-
-    .quick-whatsapp span {
-      background: linear-gradient(135deg, #19f3b6, #37d6ff);
-    }
-
-    /* Ajuste v8:
-       Las tarjetas flotantes inician al lado de las estadísticas, sin ocupar espacio extra hacia abajo.
-       Siguen pudiendo lanzarse por la portada y soluciones. */
-    .global-game-card {
-      z-index: 74;
-      width: min(292px, calc(100vw - 36px));
-    }
-
-    .global-game-card.chat-preview {
-      width: min(352px, calc(100vw - 36px));
-    }
-
-    @media (max-width: 760px) {
-      .hero-quick-actions {
-        justify-content: flex-start;
-        margin-bottom: 10px;
-      }
-
-      .quick-social {
-        min-height: 32px;
-        padding: 7px 10px;
-      }
-
-      .global-game-card,
-      .global-game-card.chat-preview {
-        width: calc(100vw - 32px);
       }
     }
 
