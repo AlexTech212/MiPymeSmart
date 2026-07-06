@@ -859,4 +859,202 @@ const themes = {
 
     window.addEventListener("DOMContentLoaded", initSolutionPillHighlights);
 
+    // Ajuste v17:
+    // El selector de colores y el botón WhatsApp se agrupan y se mueven juntos.
+    // Si arrastras cualquiera de los dos elementos, se mueve el bloque completo.
+    function initMovableFloatingControls() {
+      const themeSwitcher = document.querySelector(".theme-switcher");
+      const whatsappButton = document.querySelector(".wa-float");
+
+      if (!themeSwitcher || !whatsappButton) return;
+
+      const cluster = document.createElement("div");
+      cluster.className = "floating-control-cluster";
+
+      // Insertamos el bloque antes del selector y movemos ambos elementos dentro.
+      themeSwitcher.parentNode.insertBefore(cluster, themeSwitcher);
+      cluster.appendChild(themeSwitcher);
+      cluster.appendChild(whatsappButton);
+
+      const state = {
+        x: null,
+        y: null,
+        startX: 0,
+        startY: 0,
+        pointerStartX: 0,
+        pointerStartY: 0,
+        dragging: false,
+        moved: false,
+        pointerId: null,
+        holdTimer: null
+      };
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function getDefaultPosition() {
+        const rect = cluster.getBoundingClientRect();
+        return {
+          x: 18,
+          y: window.innerHeight - rect.height - 18
+        };
+      }
+
+      function setPosition(x, y) {
+        const rect = cluster.getBoundingClientRect();
+
+        state.x = clamp(x, 10, Math.max(10, window.innerWidth - rect.width - 10));
+        state.y = clamp(y, 10, Math.max(10, window.innerHeight - rect.height - 10));
+
+        cluster.style.left = `${state.x}px`;
+        cluster.style.top = `${state.y}px`;
+        cluster.style.right = "auto";
+        cluster.style.bottom = "auto";
+      }
+
+      function ensurePosition() {
+        if (state.x === null || state.y === null) {
+          const saved = localStorage.getItem("mipymesmart-floating-controls-position");
+
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              setPosition(Number(parsed.x), Number(parsed.y));
+              return;
+            } catch (error) {}
+          }
+
+          const defaultPosition = getDefaultPosition();
+          setPosition(defaultPosition.x, defaultPosition.y);
+        } else {
+          setPosition(state.x, state.y);
+        }
+      }
+
+      function startDrag(event) {
+        if (state.dragging) return;
+
+        ensurePosition();
+
+        state.dragging = true;
+        state.moved = false;
+        state.pointerId = event.pointerId;
+        state.startX = state.x;
+        state.startY = state.y;
+        state.pointerStartX = event.clientX;
+        state.pointerStartY = event.clientY;
+
+        cluster.classList.add("is-moving");
+
+        try {
+          cluster.setPointerCapture(event.pointerId);
+        } catch (error) {}
+      }
+
+      function nearPageBottom() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const viewportBottom = scrollTop + window.innerHeight;
+        const documentHeight = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight
+        );
+
+        return viewportBottom >= documentHeight - 360;
+      }
+
+      function updateMoveHint() {
+        cluster.classList.toggle("show-move-hint", nearPageBottom());
+      }
+
+      cluster.addEventListener("pointerdown", event => {
+        if (event.button !== undefined && event.button !== 0) return;
+
+        ensurePosition();
+
+        state.pointerId = event.pointerId;
+        state.startX = state.x;
+        state.startY = state.y;
+        state.pointerStartX = event.clientX;
+        state.pointerStartY = event.clientY;
+        state.moved = false;
+
+        clearTimeout(state.holdTimer);
+        state.holdTimer = setTimeout(() => startDrag(event), 230);
+      });
+
+      cluster.addEventListener("pointermove", event => {
+        if (state.pointerId !== event.pointerId) return;
+
+        const deltaX = event.clientX - state.pointerStartX;
+        const deltaY = event.clientY - state.pointerStartY;
+        const distance = Math.hypot(deltaX, deltaY);
+
+        if (!state.dragging && distance > 7) {
+          clearTimeout(state.holdTimer);
+          startDrag(event);
+        }
+
+        if (!state.dragging) return;
+
+        event.preventDefault();
+        state.moved = true;
+
+        setPosition(state.startX + deltaX, state.startY + deltaY);
+      });
+
+      function endDrag(event) {
+        clearTimeout(state.holdTimer);
+
+        if (state.pointerId !== event.pointerId) return;
+
+        if (state.dragging) {
+          localStorage.setItem(
+            "mipymesmart-floating-controls-position",
+            JSON.stringify({ x: state.x, y: state.y })
+          );
+        }
+
+        state.dragging = false;
+        state.pointerId = null;
+        cluster.classList.remove("is-moving");
+
+        try {
+          cluster.releasePointerCapture(event.pointerId);
+        } catch (error) {}
+      }
+
+      cluster.addEventListener("pointerup", endDrag);
+      cluster.addEventListener("pointercancel", endDrag);
+
+      // Si fue arrastrado, evitamos que active WhatsApp o cambie color accidentalmente.
+      cluster.addEventListener("click", event => {
+        if (state.moved) {
+          event.preventDefault();
+          event.stopPropagation();
+          state.moved = false;
+        }
+      }, true);
+
+      // Doble clic sobre el bloque: volver al lugar original.
+      cluster.addEventListener("dblclick", event => {
+        event.preventDefault();
+        localStorage.removeItem("mipymesmart-floating-controls-position");
+        const defaultPosition = getDefaultPosition();
+        setPosition(defaultPosition.x, defaultPosition.y);
+      });
+
+      window.addEventListener("resize", ensurePosition);
+      window.addEventListener("scroll", updateMoveHint, { passive: true });
+
+      // Esperamos un frame para medir correctamente alto del cluster.
+      requestAnimationFrame(() => {
+        ensurePosition();
+        updateMoveHint();
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", initMovableFloatingControls);
+
+
     document.getElementById("year").textContent = new Date().getFullYear();

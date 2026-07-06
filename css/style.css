@@ -2346,3 +2346,162 @@
       }
     }
 
+    /* Ajuste v16:
+       Botón flotante de WhatsApp movible en cualquier sección.
+       La viñeta "¡Muéveme!" aparece solo al llegar al final de la página. */
+    .wa-float {
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      will-change: left, top, transform;
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        filter .18s ease,
+        opacity .18s ease;
+    }
+
+    .wa-float::before {
+      content: "";
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid rgba(3,16,22,.55);
+      border-right: 2px solid rgba(3,16,22,.55);
+      border-radius: 2px;
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    .wa-float.is-moving {
+      cursor: grabbing;
+      transform: scale(1.035);
+      box-shadow: 0 26px 70px rgba(25,243,182,.28);
+      filter: brightness(1.04);
+    }
+
+    .wa-float.show-move-hint::after {
+      content: "¡Muéveme!";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 10px);
+      transform: translateX(-50%) translateY(6px);
+      padding: 7px 10px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      color: var(--soft);
+      background: rgba(5,9,15,.82);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 14px 34px rgba(0,0,0,.24);
+      animation: moveHintPop .38s ease forwards;
+    }
+
+    @keyframes moveHintPop {
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .wa-float.show-move-hint::after {
+        font-size: 11px;
+        padding: 6px 9px;
+      }
+    }
+
+    /* Ajuste v17:
+       El selector de colores y el botón WhatsApp ahora se mueven juntos como un solo bloque. */
+    .floating-control-cluster {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      z-index: 92;
+      display: grid;
+      gap: 8px;
+      justify-items: start;
+      align-items: start;
+      touch-action: none;
+      user-select: none;
+      will-change: left, top, transform;
+    }
+
+    .floating-control-cluster.is-moving {
+      cursor: grabbing;
+      transform: scale(1.015);
+      filter: brightness(1.03);
+    }
+
+    .floating-control-cluster .theme-switcher,
+    .floating-control-cluster .wa-float {
+      position: relative !important;
+      left: auto !important;
+      top: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      margin: 0 !important;
+    }
+
+    .floating-control-cluster .theme-switcher {
+      cursor: grab;
+      z-index: auto;
+    }
+
+    .floating-control-cluster .wa-float {
+      cursor: grab;
+      z-index: auto;
+    }
+
+    .floating-control-cluster.is-moving .theme-switcher,
+    .floating-control-cluster.is-moving .wa-float {
+      cursor: grabbing;
+    }
+
+    .floating-control-cluster .theme-switcher::after {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .floating-control-cluster.show-move-hint .wa-float::after {
+      content: "¡Muéveme!";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 10px);
+      transform: translateX(-50%) translateY(6px);
+      padding: 7px 10px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      color: var(--soft);
+      background: rgba(5,9,15,.82);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 14px 34px rgba(0,0,0,.24);
+      animation: moveHintPop .38s ease forwards;
+    }
+
+    @media (max-width: 760px) {
+      .floating-control-cluster {
+        left: 14px;
+        bottom: 14px;
+      }
+
+      .floating-control-cluster.show-move-hint .wa-float::after {
+        font-size: 11px;
+        padding: 6px 9px;
+      }
+    }
+
