@@ -2015,37 +2015,120 @@
       }
     }
 
-    /* Ajuste v11:
-       TikTok y WhatsApp salen del recuadro "Sistema de modernización pyme".
-       Ahora quedan arriba del panel, en el espacio vacío superior del hero,
-       alineados hacia la derecha de las viñetas principales. */
+    /* Ajuste v12:
+       Dock social más moderno, con TikTok + Instagram + WhatsApp.
+       Se reduce el vacío visual superior y los botones flotan sobre el espacio libre,
+       sin empujar el recuadro "Sistema de modernización pyme". */
     .hero-grid {
       position: relative;
     }
 
     .hero-grid > .hero-quick-actions {
       position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 35;
-      display: flex;
-      justify-content: flex-end;
+      top: 6px;
+      right: 4px;
+      z-index: 40;
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 8px;
       margin: 0;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      background: rgba(5,9,15,.45);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 18px 45px rgba(0,0,0,.18);
+    }
+
+    .quick-social-label {
+      padding: 0 8px 0 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .quick-social {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      min-height: 38px;
+      display: inline-grid;
+      place-items: center;
       padding: 0;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      color: var(--white);
+      background: rgba(255,255,255,.08);
+      overflow: visible;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
     }
 
-    .hero-panel .hero-quick-actions {
-      display: none !important;
+    .quick-social:hover {
+      transform: translateY(-2px) scale(1.04);
+      border-color: rgba(255,255,255,.34);
+      filter: brightness(1.08);
     }
 
-    .hero-grid > .hero-quick-actions + div {
-      padding-top: 0;
+    .quick-social svg {
+      width: 19px;
+      height: 19px;
+      fill: currentColor;
+      display: block;
+    }
+
+    .quick-social > span {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 8px);
+      transform: translateX(-50%) translateY(-4px);
+      padding: 5px 8px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      color: var(--soft);
+      background: rgba(5,9,15,.78);
+      backdrop-filter: blur(12px);
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .quick-social:hover > span {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .quick-tiktok {
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 32% 22%, rgba(255,255,255,.34), transparent 24%),
+        linear-gradient(135deg, #111827 0%, #00f2ea 48%, #ff0050 100%);
+      box-shadow: 0 14px 34px rgba(0,242,234,.14);
+    }
+
+    .quick-instagram {
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 28% 24%, rgba(255,255,255,.36), transparent 20%),
+        linear-gradient(135deg, #f58529 0%, #dd2a7b 42%, #8134af 72%, #515bd4 100%);
+      box-shadow: 0 14px 34px rgba(221,42,123,.18);
+    }
+
+    .quick-whatsapp {
+      color: #031016;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.42), transparent 22%),
+        linear-gradient(135deg, #25D366 0%, #19f3b6 52%, #37d6ff 100%);
+      box-shadow: 0 14px 34px rgba(37,211,102,.18);
     }
 
     .hero-grid > .hero-quick-actions ~ .hero-panel {
-      margin-top: 42px;
+      margin-top: 18px;
     }
 
     @media (max-width: 1040px) {
@@ -2053,8 +2136,12 @@
         position: relative;
         grid-column: 1 / -1;
         justify-content: flex-start;
+        width: max-content;
+        max-width: 100%;
         order: -1;
-        margin-bottom: -8px;
+        top: auto;
+        right: auto;
+        margin: -4px 0 8px;
       }
 
       .hero-grid > .hero-quick-actions ~ .hero-panel {
@@ -2064,9 +2151,25 @@
 
     @media (max-width: 640px) {
       .hero-grid > .hero-quick-actions {
+        width: 100%;
+        justify-content: flex-start;
+        border-radius: 22px;
         flex-wrap: wrap;
-        margin-top: 4px;
-        margin-bottom: 4px;
+      }
+
+      .quick-social-label {
+        width: 100%;
+        padding: 0 4px 2px;
+      }
+
+      .quick-social {
+        width: 36px;
+        height: 36px;
+        min-height: 36px;
+      }
+
+      .quick-social > span {
+        display: none;
       }
     }
 
