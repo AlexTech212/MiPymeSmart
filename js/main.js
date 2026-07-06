@@ -111,25 +111,89 @@ const themes = {
       });
     });
 
-    
 
-    // Navegación precisa: corrige el desfase causado por el header fijo.
-    // Ajusta automáticamente el alto del header y deja un pequeño margen visual.
+    // Navegación precisa v2:
+    // En vez de alinear el inicio del <section>, alinea el primer contenido visible
+    // (título, eyebrow, bloque principal). Esto evita el desfase por el padding interno.
     const siteHeader = document.querySelector(".site-header");
+    const DESKTOP_TOP_GAP = 26;
+    const MOBILE_TOP_GAP = 18;
+
+    function getHeaderHeight() {
+      return siteHeader ? Math.ceil(siteHeader.getBoundingClientRect().height) : 76;
+    }
+
+    function getTopGap() {
+      return window.innerWidth <= 660 ? MOBILE_TOP_GAP : DESKTOP_TOP_GAP;
+    }
 
     function updateScrollOffset() {
-      const headerHeight = siteHeader ? siteHeader.offsetHeight : 76;
-      const visualGap = window.innerWidth <= 660 ? 14 : 22;
-      document.documentElement.style.setProperty("--scroll-offset", `${headerHeight + visualGap}px`);
+      const offset = getHeaderHeight() + getTopGap();
+      document.documentElement.style.setProperty("--scroll-offset", `${offset}px`);
+    }
+
+    function getSectionAnchorTarget(section) {
+      if (!section) return null;
+
+      // Primero buscamos el contenido real que el usuario espera ver al llegar.
+      const preferredTarget = section.querySelector(
+        ".section-head, .split-feature > div:first-child, .hero-grid > div:first-child, .about-shell, .portfolio-grid, .social-grid, .diagnostic, .eyebrow, h2, h1"
+      );
+
+      return preferredTarget || section;
     }
 
     function scrollToSection(hash) {
-      const target = document.querySelector(hash);
-      if (!target) return;
+      const section = document.querySelector(hash);
+      if (!section) return;
 
       updateScrollOffset();
 
-      const headerHeight = siteHeader ? siteHeader.offsetHeight : 76;
+      const anchorTarget = getSectionAnchorTarget(section);
+      const headerHeight = getHeaderHeight();
+      const topGap = getTopGap();
+      const absoluteTop = anchorTarget.getBoundingClientRect().top + window.pageYOffset;
+      const targetPosition = absoluteTop - headerHeight - topGap;
+
+      window.scrollTo({
+        top: Math.max(targetPosition, 0),
+        behavior: "smooth"
+      });
+
+      history.pushState(null, "", hash);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener("click", (event) => {
+        const hash = anchor.getAttribute("href");
+        if (!hash || hash === "#") return;
+
+        const section = document.querySelector(hash);
+        if (!section) return;
+
+        event.preventDefault();
+
+        menu.classList.remove("open");
+        document.body.classList.remove("menu-open");
+        hamburger.setAttribute("aria-expanded", "false");
+        hamburger.textContent = "☰";
+
+        scrollToSection(hash);
+      });
+    });
+
+    window.addEventListener("resize", updateScrollOffset);
+    window.addEventListener("load", () => {
+      updateScrollOffset();
+
+      if (window.location.hash) {
+        setTimeout(() => scrollToSection(window.location.hash), 140);
+      }
+    });
+
+    updateScrollOffset();
+
+const headerHeight = siteHeader ? siteHeader.offsetHeight : 76;
       const visualGap = window.innerWidth <= 660 ? 14 : 22;
       const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - visualGap;
 

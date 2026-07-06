@@ -32,11 +32,15 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: var(--scroll-offset, 108px);
+      scroll-padding-top: var(--scroll-offset, 104px);
     }
 
     main section[id] {
-      scroll-margin-top: var(--scroll-offset, 108px);
+      scroll-margin-top: var(--scroll-offset, 104px);
+    }
+
+    .section-anchor-target {
+      scroll-margin-top: var(--scroll-offset, 104px);
     }
 
     body {
