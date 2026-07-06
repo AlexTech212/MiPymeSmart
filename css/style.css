@@ -2278,3 +2278,71 @@
       scroll-margin-top: var(--scroll-offset, 104px);
     }
 
+    /* Ajuste v15:
+       Al presionar los pills del hero se iluminan las tarjetas correspondientes en Soluciones. */
+    .solution-card {
+      position: relative;
+    }
+
+    .solution-card.solution-highlight {
+      border-color: rgba(25, 243, 182, .72) !important;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(25, 243, 182, .20), transparent 36%),
+        radial-gradient(circle at 100% 100%, rgba(55, 214, 255, .16), transparent 34%),
+        rgba(255,255,255,.105) !important;
+      box-shadow:
+        0 0 0 1px rgba(25, 243, 182, .22) inset,
+        0 0 34px rgba(25, 243, 182, .18),
+        0 24px 80px rgba(0,0,0,.30);
+      transform: translateY(-6px);
+      animation: solutionGlowPulse 1.45s ease-in-out 0s 3;
+    }
+
+    .solution-card.solution-highlight .icon {
+      border-color: rgba(25, 243, 182, .56);
+      background: linear-gradient(135deg, rgba(25,243,182,.28), rgba(55,214,255,.18));
+      box-shadow: 0 0 28px rgba(25, 243, 182, .18);
+    }
+
+    .solution-card.solution-highlight::after {
+      content: "Solución recomendada";
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 3;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #031016;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .2px;
+      box-shadow: 0 12px 30px rgba(25,243,182,.18);
+      pointer-events: none;
+    }
+
+    @keyframes solutionGlowPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(25, 243, 182, .18) inset,
+          0 0 26px rgba(25, 243, 182, .12),
+          0 24px 80px rgba(0,0,0,.30);
+      }
+
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(55, 214, 255, .30) inset,
+          0 0 48px rgba(25, 243, 182, .32),
+          0 28px 90px rgba(0,0,0,.36);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .solution-card.solution-highlight::after {
+        top: 14px;
+        right: 14px;
+        font-size: 10px;
+        padding: 5px 8px;
+      }
+    }
+

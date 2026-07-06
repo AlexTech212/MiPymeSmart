@@ -783,4 +783,80 @@ const themes = {
       });
     });
 
+
+
+    // Ajuste v15:
+    // Los pills del hero bajan a Soluciones y encienden la tarjeta correspondiente.
+    function initSolutionPillHighlights() {
+      const pills = document.querySelectorAll(".hero-solution-pill");
+      const cards = {
+        web: document.querySelector('[data-solution-card="web"]'),
+        electricidad: document.querySelector('[data-solution-card="electricidad"]'),
+        climatizacion: document.querySelector('[data-solution-card="climatizacion"]')
+      };
+
+      const cardsAnchor = document.querySelector("#soluciones-cards");
+      let highlightTimer = null;
+
+      if (!pills.length || !cardsAnchor) return;
+
+      function getHeaderHeightForHighlight() {
+        const header = document.querySelector(".site-header");
+        return header ? Math.ceil(header.getBoundingClientRect().height) : 76;
+      }
+
+      function centerSolutionCards() {
+        const headerHeight = getHeaderHeightForHighlight();
+        const rect = cardsAnchor.getBoundingClientRect();
+        const absoluteTop = rect.top + window.pageYOffset;
+        const availableHeight = window.innerHeight - headerHeight;
+        const centerGap = Math.max(18, (availableHeight - rect.height) / 2);
+        const targetPosition = absoluteTop - headerHeight - centerGap;
+
+        window.scrollTo({
+          top: Math.max(targetPosition, 0),
+          behavior: "smooth"
+        });
+
+        history.pushState(null, "", "#soluciones-cards");
+      }
+
+      function clearHighlights() {
+        Object.values(cards).forEach(card => {
+          if (card) card.classList.remove("solution-highlight");
+        });
+      }
+
+      function applyHighlight(type) {
+        clearHighlights();
+        clearTimeout(highlightTimer);
+
+        if (type === "all") {
+          Object.values(cards).forEach(card => {
+            if (card) card.classList.add("solution-highlight");
+          });
+        } else if (cards[type]) {
+          cards[type].classList.add("solution-highlight");
+        }
+
+        highlightTimer = setTimeout(clearHighlights, 6200);
+      }
+
+      pills.forEach(pill => {
+        pill.addEventListener("click", event => {
+          const type = pill.dataset.highlight || "all";
+
+          // Capturamos este clic antes del scroll general para poder iluminar correctamente.
+          event.preventDefault();
+          event.stopImmediatePropagation();
+
+          centerSolutionCards();
+
+          setTimeout(() => applyHighlight(type), 520);
+        }, true);
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", initSolutionPillHighlights);
+
     document.getElementById("year").textContent = new Date().getFullYear();
