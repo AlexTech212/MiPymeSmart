@@ -102,45 +102,37 @@ const themes = {
       hamburger.textContent = isOpen ? "×" : "☰";
     });
 
-    document.querySelectorAll(".menu a").forEach(link => {
-      link.addEventListener("click", () => {
-        menu.classList.remove("open");
-        document.body.classList.remove("menu-open");
-        hamburger.setAttribute("aria-expanded", "false");
-        hamburger.textContent = "☰";
-      });
-    });
-
-
-    // Navegación precisa v2:
-    // En vez de alinear el inicio del <section>, alinea el primer contenido visible
-    // (título, eyebrow, bloque principal). Esto evita el desfase por el padding interno.
+    // Navegación precisa v3:
+    // Corrige el desfase causado por el header fijo y por el padding interno de las secciones.
+    // En vez de apuntar al inicio del <section>, apunta al primer contenido visible.
     const siteHeader = document.querySelector(".site-header");
-    const DESKTOP_TOP_GAP = 26;
-    const MOBILE_TOP_GAP = 18;
 
     function getHeaderHeight() {
       return siteHeader ? Math.ceil(siteHeader.getBoundingClientRect().height) : 76;
     }
 
-    function getTopGap() {
-      return window.innerWidth <= 660 ? MOBILE_TOP_GAP : DESKTOP_TOP_GAP;
+    function getVisualGap() {
+      return window.innerWidth <= 660 ? 18 : 28;
     }
 
     function updateScrollOffset() {
-      const offset = getHeaderHeight() + getTopGap();
+      const offset = getHeaderHeight() + getVisualGap();
       document.documentElement.style.setProperty("--scroll-offset", `${offset}px`);
     }
 
-    function getSectionAnchorTarget(section) {
+    function getReadableAnchor(section) {
       if (!section) return null;
 
-      // Primero buscamos el contenido real que el usuario espera ver al llegar.
-      const preferredTarget = section.querySelector(
-        ".section-head, .split-feature > div:first-child, .hero-grid > div:first-child, .about-shell, .portfolio-grid, .social-grid, .diagnostic, .eyebrow, h2, h1"
-      );
+      return section.querySelector(
+        ".section-head, .split-feature > div:first-child, .hero-grid > div:first-child, .cta, .about-shell, .portfolio-grid, .social-grid, .diagnostic, .eyebrow, h2, h1"
+      ) || section;
+    }
 
-      return preferredTarget || section;
+    function closeMobileMenu() {
+      menu.classList.remove("open");
+      document.body.classList.remove("menu-open");
+      hamburger.setAttribute("aria-expanded", "false");
+      hamburger.textContent = "☰";
     }
 
     function scrollToSection(hash) {
@@ -149,11 +141,9 @@ const themes = {
 
       updateScrollOffset();
 
-      const anchorTarget = getSectionAnchorTarget(section);
-      const headerHeight = getHeaderHeight();
-      const topGap = getTopGap();
-      const absoluteTop = anchorTarget.getBoundingClientRect().top + window.pageYOffset;
-      const targetPosition = absoluteTop - headerHeight - topGap;
+      const anchorTarget = getReadableAnchor(section);
+      const top = anchorTarget.getBoundingClientRect().top + window.pageYOffset;
+      const targetPosition = top - getHeaderHeight() - getVisualGap();
 
       window.scrollTo({
         top: Math.max(targetPosition, 0),
@@ -172,69 +162,24 @@ const themes = {
         if (!section) return;
 
         event.preventDefault();
-
-        menu.classList.remove("open");
-        document.body.classList.remove("menu-open");
-        hamburger.setAttribute("aria-expanded", "false");
-        hamburger.textContent = "☰";
-
+        closeMobileMenu();
         scrollToSection(hash);
       });
     });
 
     window.addEventListener("resize", updateScrollOffset);
+
     window.addEventListener("load", () => {
       updateScrollOffset();
 
       if (window.location.hash) {
-        setTimeout(() => scrollToSection(window.location.hash), 140);
+        setTimeout(() => scrollToSection(window.location.hash), 180);
       }
     });
 
     updateScrollOffset();
 
-const headerHeight = siteHeader ? siteHeader.offsetHeight : 76;
-      const visualGap = window.innerWidth <= 660 ? 14 : 22;
-      const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - visualGap;
-
-      window.scrollTo({
-        top: Math.max(targetPosition, 0),
-        behavior: "smooth"
-      });
-
-      history.pushState(null, "", hash);
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener("click", (event) => {
-        const hash = anchor.getAttribute("href");
-        if (!hash || hash === "#") return;
-
-        const target = document.querySelector(hash);
-        if (!target) return;
-
-        event.preventDefault();
-
-        menu.classList.remove("open");
-        document.body.classList.remove("menu-open");
-        hamburger.setAttribute("aria-expanded", "false");
-        hamburger.textContent = "☰";
-
-        scrollToSection(hash);
-      });
-    });
-
-    window.addEventListener("resize", updateScrollOffset);
-    window.addEventListener("load", () => {
-      updateScrollOffset();
-      if (window.location.hash) {
-        setTimeout(() => scrollToSection(window.location.hash), 120);
-      }
-    });
-
-    updateScrollOffset();
-
-function updateScrollUI() {
+    function updateScrollUI() {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - window.innerHeight;
       const progress = height > 0 ? (scrollTop / height) * 100 : 0;

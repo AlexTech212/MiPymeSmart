@@ -39,10 +39,6 @@
       scroll-margin-top: var(--scroll-offset, 104px);
     }
 
-    .section-anchor-target {
-      scroll-margin-top: var(--scroll-offset, 104px);
-    }
-
     body {
       min-height: 100vh;
       font-family: Inter, Arial, Helvetica, sans-serif;
@@ -1739,7 +1735,7 @@
 
     @media (max-width: 660px) {
       html {
-        scroll-padding-top: 80px;
+        scroll-padding-top: var(--scroll-offset, 94px);
       }
 
       .container {
