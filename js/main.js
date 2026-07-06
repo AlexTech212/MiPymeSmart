@@ -111,7 +111,66 @@ const themes = {
       });
     });
 
-    function updateScrollUI() {
+    
+
+    // Navegación precisa: corrige el desfase causado por el header fijo.
+    // Ajusta automáticamente el alto del header y deja un pequeño margen visual.
+    const siteHeader = document.querySelector(".site-header");
+
+    function updateScrollOffset() {
+      const headerHeight = siteHeader ? siteHeader.offsetHeight : 76;
+      const visualGap = window.innerWidth <= 660 ? 14 : 22;
+      document.documentElement.style.setProperty("--scroll-offset", `${headerHeight + visualGap}px`);
+    }
+
+    function scrollToSection(hash) {
+      const target = document.querySelector(hash);
+      if (!target) return;
+
+      updateScrollOffset();
+
+      const headerHeight = siteHeader ? siteHeader.offsetHeight : 76;
+      const visualGap = window.innerWidth <= 660 ? 14 : 22;
+      const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - visualGap;
+
+      window.scrollTo({
+        top: Math.max(targetPosition, 0),
+        behavior: "smooth"
+      });
+
+      history.pushState(null, "", hash);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener("click", (event) => {
+        const hash = anchor.getAttribute("href");
+        if (!hash || hash === "#") return;
+
+        const target = document.querySelector(hash);
+        if (!target) return;
+
+        event.preventDefault();
+
+        menu.classList.remove("open");
+        document.body.classList.remove("menu-open");
+        hamburger.setAttribute("aria-expanded", "false");
+        hamburger.textContent = "☰";
+
+        scrollToSection(hash);
+      });
+    });
+
+    window.addEventListener("resize", updateScrollOffset);
+    window.addEventListener("load", () => {
+      updateScrollOffset();
+      if (window.location.hash) {
+        setTimeout(() => scrollToSection(window.location.hash), 120);
+      }
+    });
+
+    updateScrollOffset();
+
+function updateScrollUI() {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - window.innerHeight;
       const progress = height > 0 ? (scrollTop / height) * 100 : 0;

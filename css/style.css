@@ -32,7 +32,11 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 92px;
+      scroll-padding-top: var(--scroll-offset, 108px);
+    }
+
+    main section[id] {
+      scroll-margin-top: var(--scroll-offset, 108px);
     }
 
     body {
