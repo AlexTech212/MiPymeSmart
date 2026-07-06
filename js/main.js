@@ -424,95 +424,105 @@ const themes = {
 
 
 
-    // Interacción tipo juego v5 para tarjetas del hero:
-    // arrastrar, lanzar, rebotar y efecto visual al chocar.
-    function initHeroPhysicsCards() {
+    // Tarjetas movibles v6:
+    // Versión segura: primero se ven normal; luego se activan abajo del panel principal.
+    // Se pueden arrastrar, lanzar con impulso, rebotan y muestran efecto visual al chocar.
+    function initMovableHeroCards() {
       const panel = document.querySelector(".hero-panel");
       if (!panel) return;
 
+      const systemWindow = panel.querySelector(".system-window");
       const cards = [
         panel.querySelector(".floating-metric"),
         panel.querySelector(".chat-preview")
       ].filter(Boolean);
 
-      if (!cards.length) return;
+      if (!systemWindow || cards.length < 2) return;
 
-      const systemWindow = panel.querySelector(".system-window");
-      panel.classList.add("physics-enabled");
-
-      let panelRect;
-      let animationFrame = null;
       const states = new Map();
+      let frame = null;
+      const margin = 18;
+      const gapBelowWindow = 24;
 
       function clamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
       }
 
-      function refreshPanelHeight() {
-        const systemHeight = systemWindow ? systemWindow.offsetHeight : 360;
-        const largestCard = Math.max(...cards.map(card => card.offsetHeight || 120));
-        const minHeight = systemHeight + largestCard + 64;
-        panel.style.minHeight = `${minHeight}px`;
-      }
-
-      function updatePanelRect() {
-        panelRect = panel.getBoundingClientRect();
-      }
-
-      function setCardPosition(card, x, y) {
-        const state = states.get(card);
-        if (!state) return;
-
-        state.x = x;
-        state.y = y;
-
-        card.style.setProperty("--card-x", `${x}px`);
-        card.style.setProperty("--card-y", `${y}px`);
-        card.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      function getPlayAreaTop() {
+        return systemWindow.offsetTop + systemWindow.offsetHeight + gapBelowWindow;
       }
 
       function getBounds(card) {
-        updatePanelRect();
-        return {
-          minX: 18,
-          minY: 18,
-          maxX: Math.max(18, panel.clientWidth - card.offsetWidth - 18),
-          maxY: Math.max(18, panel.clientHeight - card.offsetHeight - 18)
-        };
+        const minX = margin;
+        const maxX = Math.max(margin, panel.clientWidth - card.offsetWidth - margin);
+        const minY = getPlayAreaTop();
+        const maxY = Math.max(minY, panel.clientHeight - card.offsetHeight - margin);
+
+        return { minX, maxX, minY, maxY };
       }
 
-      function placeInitialCards() {
-        refreshPanelHeight();
-        updatePanelRect();
+      function setPosition(card, x, y) {
+        const state = states.get(card);
+        if (state) {
+          state.x = x;
+          state.y = y;
+        }
 
-        const systemBottom = systemWindow ? systemWindow.offsetTop + systemWindow.offsetHeight : 360;
-        const gap = 22;
-        const baseY = systemBottom + gap;
+        card.style.setProperty("--card-left", `${x}px`);
+        card.style.setProperty("--card-top", `${y}px`);
+      }
 
-        cards.forEach((card, index) => {
-          const bounds = getBounds(card);
-          const x = index === 0 ? bounds.minX : bounds.maxX;
-          const y = clamp(baseY, bounds.minY, bounds.maxY);
+      function updatePanelHeight() {
+        const playTop = getPlayAreaTop();
+        const tallestCard = Math.max(...cards.map(card => card.offsetHeight || 120));
+        const desiredHeight = playTop + tallestCard + 52;
+        panel.style.minHeight = `${desiredHeight}px`;
+      }
 
-          states.set(card, {
-            x,
-            y,
-            vx: 0,
-            vy: 0,
-            dragging: false,
-            lastX: 0,
-            lastY: 0,
-            lastT: 0,
-            pointerId: null,
-            startX: x,
-            startY: y
+      function placeInitialCards(force = false) {
+        panel.classList.add("cards-game-enabled");
+
+        requestAnimationFrame(() => {
+          updatePanelHeight();
+
+          cards.forEach((card, index) => {
+            let state = states.get(card);
+
+            if (!state) {
+              state = {
+                x: 0,
+                y: 0,
+                vx: 0,
+                vy: 0,
+                dragging: false,
+                pointerId: null,
+                grabX: 0,
+                grabY: 0,
+                lastX: 0,
+                lastY: 0,
+                lastT: 0,
+                homeX: 0,
+                homeY: 0
+              };
+              states.set(card, state);
+            }
+
+            if (!force && (state.dragging || state.hasBeenPlaced)) return;
+
+            const bounds = getBounds(card);
+            const homeX = index === 0 ? bounds.minX : bounds.maxX;
+            const homeY = bounds.minY;
+
+            state.homeX = homeX;
+            state.homeY = homeY;
+            state.hasBeenPlaced = true;
+
+            setPosition(card, homeX, homeY);
           });
-
-          setCardPosition(card, x, y);
         });
       }
 
-      function impact(card, x, y) {
+      function showImpact(card, x, y) {
         card.classList.remove("corner-hit");
         void card.offsetWidth;
         card.classList.add("corner-hit");
@@ -527,13 +537,13 @@ const themes = {
       }
 
       function animate() {
-        let shouldContinue = false;
+        let moving = false;
 
         cards.forEach(card => {
           const state = states.get(card);
           if (!state || state.dragging) return;
 
-          if (Math.abs(state.vx) < 0.04 && Math.abs(state.vy) < 0.04) {
+          if (Math.abs(state.vx) < 0.05 && Math.abs(state.vy) < 0.05) {
             state.vx = 0;
             state.vy = 0;
             return;
@@ -572,28 +582,20 @@ const themes = {
             hitY = bounds.maxY + card.offsetHeight;
           }
 
-          if (hit) {
-            impact(card, hitX, hitY);
-          }
+          if (hit) showImpact(card, hitX, hitY);
 
           state.vx *= 0.985;
           state.vy *= 0.985;
 
-          setCardPosition(card, state.x, state.y);
-          shouldContinue = true;
+          setPosition(card, state.x, state.y);
+          moving = true;
         });
 
-        if (shouldContinue) {
-          animationFrame = requestAnimationFrame(animate);
-        } else {
-          animationFrame = null;
-        }
+        frame = moving ? requestAnimationFrame(animate) : null;
       }
 
       function startAnimation() {
-        if (!animationFrame) {
-          animationFrame = requestAnimationFrame(animate);
-        }
+        if (!frame) frame = requestAnimationFrame(animate);
       }
 
       cards.forEach(card => {
@@ -603,30 +605,33 @@ const themes = {
           const state = states.get(card);
           if (!state) return;
 
-          card.setPointerCapture(event.pointerId);
-          card.classList.add("is-dragging");
+          const panelRect = panel.getBoundingClientRect();
 
           state.dragging = true;
           state.pointerId = event.pointerId;
-          state.offsetX = event.clientX - panel.getBoundingClientRect().left - state.x;
-          state.offsetY = event.clientY - panel.getBoundingClientRect().top - state.y;
+          state.grabX = event.clientX - panelRect.left - state.x;
+          state.grabY = event.clientY - panelRect.top - state.y;
           state.lastX = event.clientX;
           state.lastY = event.clientY;
           state.lastT = performance.now();
           state.vx = 0;
           state.vy = 0;
+
+          card.classList.add("is-dragging");
+          card.setPointerCapture(event.pointerId);
         });
 
         card.addEventListener("pointermove", event => {
           const state = states.get(card);
           if (!state || !state.dragging || state.pointerId !== event.pointerId) return;
 
+          const panelRect = panel.getBoundingClientRect();
+          const bounds = getBounds(card);
           const now = performance.now();
           const dt = Math.max(now - state.lastT, 16);
-          const bounds = getBounds(card);
 
-          let nextX = event.clientX - panel.getBoundingClientRect().left - state.offsetX;
-          let nextY = event.clientY - panel.getBoundingClientRect().top - state.offsetY;
+          let nextX = event.clientX - panelRect.left - state.grabX;
+          let nextY = event.clientY - panelRect.top - state.grabY;
 
           nextX = clamp(nextX, bounds.minX, bounds.maxX);
           nextY = clamp(nextY, bounds.minY, bounds.maxY);
@@ -637,35 +642,29 @@ const themes = {
           state.lastY = event.clientY;
           state.lastT = now;
 
-          setCardPosition(card, nextX, nextY);
+          setPosition(card, nextX, nextY);
         });
 
-        card.addEventListener("pointerup", event => {
+        function releaseCard(event) {
           const state = states.get(card);
           if (!state || state.pointerId !== event.pointerId) return;
 
           state.dragging = false;
           state.pointerId = null;
+          state.vx = clamp(state.vx, -20, 20);
+          state.vy = clamp(state.vy, -20, 20);
+
           card.classList.remove("is-dragging");
 
           try {
             card.releasePointerCapture(event.pointerId);
           } catch (error) {}
 
-          state.vx = clamp(state.vx, -22, 22);
-          state.vy = clamp(state.vy, -22, 22);
           startAnimation();
-        });
+        }
 
-        card.addEventListener("pointercancel", () => {
-          const state = states.get(card);
-          if (!state) return;
-
-          state.dragging = false;
-          state.pointerId = null;
-          card.classList.remove("is-dragging");
-          startAnimation();
-        });
+        card.addEventListener("pointerup", releaseCard);
+        card.addEventListener("pointercancel", releaseCard);
 
         card.addEventListener("dblclick", () => {
           const state = states.get(card);
@@ -673,17 +672,21 @@ const themes = {
 
           state.vx = 0;
           state.vy = 0;
-          setCardPosition(card, state.startX, state.startY);
+          setPosition(card, state.homeX, state.homeY);
         });
       });
 
       window.addEventListener("resize", () => {
-        placeInitialCards();
+        cards.forEach(card => {
+          const state = states.get(card);
+          if (state) state.hasBeenPlaced = false;
+        });
+        placeInitialCards(true);
       });
 
       placeInitialCards();
     }
 
-    window.addEventListener("load", initHeroPhysicsCards);
+    window.addEventListener("DOMContentLoaded", initMovableHeroCards);
 
     document.getElementById("year").textContent = new Date().getFullYear();

@@ -1884,56 +1884,59 @@
       }
     }
 
-    /* Interacción tipo juego v5:
-       Las tarjetas del hero se pueden arrastrar y lanzar con efecto de rebote. */
-    .hero-panel.physics-enabled {
+    /* Interacción segura v6:
+       Las tarjetas se mantienen visibles siempre.
+       Por defecto se ven bajo el panel; cuando JS carga se transforman en tarjetas movibles
+       dentro de una zona inferior para no tapar el contenido superior. */
+    .hero-panel.cards-game-enabled {
       position: relative;
-      overflow: hidden;
       display: block;
+      overflow: hidden;
       padding-bottom: 24px;
     }
 
-    .hero-panel.physics-enabled .system-window {
+    .hero-panel.cards-game-enabled .system-window {
       position: relative;
       z-index: 1;
     }
 
-    .hero-panel.physics-enabled .floating-metric,
-    .hero-panel.physics-enabled .chat-preview {
+    .hero-panel.cards-game-enabled .floating-metric,
+    .hero-panel.cards-game-enabled .chat-preview {
       position: absolute;
-      left: 0;
+      left: var(--card-left, 18px);
+      top: var(--card-top, 420px);
       right: auto;
       bottom: auto;
-      width: min(280px, calc(100% - 36px));
+      width: min(282px, calc(100% - 36px));
       height: auto;
       margin-top: 0;
       z-index: 8;
       cursor: grab;
       touch-action: none;
       user-select: none;
-      will-change: transform;
-      transition: box-shadow .2s ease, border-color .2s ease, filter .2s ease;
+      will-change: left, top, transform;
+      transition: box-shadow .18s ease, border-color .18s ease, filter .18s ease;
     }
 
-    .hero-panel.physics-enabled .chat-preview {
-      width: min(330px, calc(100% - 36px));
+    .hero-panel.cards-game-enabled .chat-preview {
+      width: min(336px, calc(100% - 36px));
     }
 
-    .hero-panel.physics-enabled .floating-metric.is-dragging,
-    .hero-panel.physics-enabled .chat-preview.is-dragging {
+    .hero-panel.cards-game-enabled .floating-metric.is-dragging,
+    .hero-panel.cards-game-enabled .chat-preview.is-dragging {
       cursor: grabbing;
-      border-color: rgba(25,243,182,.55);
+      border-color: rgba(25,243,182,.58);
       box-shadow: 0 28px 80px rgba(25,243,182,.18), 0 0 0 1px rgba(255,255,255,.14) inset;
       filter: brightness(1.08);
     }
 
-    .hero-panel.physics-enabled .floating-metric.corner-hit,
-    .hero-panel.physics-enabled .chat-preview.corner-hit {
-      animation: cornerPulse .38s ease;
+    .hero-panel.cards-game-enabled .floating-metric.corner-hit,
+    .hero-panel.cards-game-enabled .chat-preview.corner-hit {
+      animation: cardHitPulse .38s ease;
     }
 
-    .hero-panel.physics-enabled .floating-metric::after,
-    .hero-panel.physics-enabled .chat-preview::after {
+    .hero-panel.cards-game-enabled .floating-metric::after,
+    .hero-panel.cards-game-enabled .chat-preview::after {
       content: "Arrástrame";
       position: absolute;
       top: -12px;
@@ -1952,10 +1955,10 @@
       box-shadow: 0 12px 28px rgba(0,0,0,.18);
     }
 
-    .hero-panel.physics-enabled .floating-metric:hover::after,
-    .hero-panel.physics-enabled .chat-preview:hover::after,
-    .hero-panel.physics-enabled .floating-metric.is-dragging::after,
-    .hero-panel.physics-enabled .chat-preview.is-dragging::after {
+    .hero-panel.cards-game-enabled .floating-metric:hover::after,
+    .hero-panel.cards-game-enabled .chat-preview:hover::after,
+    .hero-panel.cards-game-enabled .floating-metric.is-dragging::after,
+    .hero-panel.cards-game-enabled .chat-preview.is-dragging::after {
       opacity: 1;
       transform: translateY(0);
     }
@@ -1984,28 +1987,29 @@
       }
     }
 
-    @keyframes cornerPulse {
+    @keyframes cardHitPulse {
       0% {
-        transform: translate3d(var(--card-x, 0px), var(--card-y, 0px), 0) scale(1);
+        transform: scale(1);
       }
 
       45% {
+        transform: scale(1.025);
         filter: brightness(1.22);
       }
 
       100% {
-        transform: translate3d(var(--card-x, 0px), var(--card-y, 0px), 0) scale(1);
+        transform: scale(1);
       }
     }
 
     @media (max-width: 760px) {
-      .hero-panel.physics-enabled .floating-metric,
-      .hero-panel.physics-enabled .chat-preview {
+      .hero-panel.cards-game-enabled .floating-metric,
+      .hero-panel.cards-game-enabled .chat-preview {
         width: calc(100% - 28px);
       }
 
-      .hero-panel.physics-enabled .floating-metric::after,
-      .hero-panel.physics-enabled .chat-preview::after {
+      .hero-panel.cards-game-enabled .floating-metric::after,
+      .hero-panel.cards-game-enabled .chat-preview::after {
         content: "Mover";
       }
     }
