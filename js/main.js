@@ -756,4 +756,31 @@ const themes = {
     window.addEventListener("DOMContentLoaded", initHeroOnlyFloatingCards);
 
 
+
+
+    // Ajuste v14 fallback: clic en pills del hero centra directamente las tarjetas de Soluciones.
+    document.querySelectorAll(".hero-solution-pill").forEach(pill => {
+      pill.addEventListener("click", event => {
+        const target = document.querySelector("#soluciones-cards");
+        const header = document.querySelector(".site-header");
+        if (!target) return;
+
+        event.preventDefault();
+
+        const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 76;
+        const rect = target.getBoundingClientRect();
+        const absoluteTop = rect.top + window.pageYOffset;
+        const availableHeight = window.innerHeight - headerHeight;
+        const centerGap = Math.max(18, (availableHeight - rect.height) / 2);
+        const targetPosition = absoluteTop - headerHeight - centerGap;
+
+        window.scrollTo({
+          top: Math.max(targetPosition, 0),
+          behavior: "smooth"
+        });
+
+        history.pushState(null, "", "#soluciones-cards");
+      });
+    });
+
     document.getElementById("year").textContent = new Date().getFullYear();

@@ -2261,3 +2261,20 @@
       }
     }
 
+    /* Ajuste v14:
+       Los pills superiores del hero ahora son clickeables y llevan directo a las tarjetas de Soluciones. */
+    .hero-solution-pill {
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .hero-solution-pill:hover {
+      transform: translateY(-2px);
+      border-color: rgba(25, 243, 182, .36);
+      box-shadow: 0 14px 32px rgba(25, 243, 182, .10);
+    }
+
+    .solutions-cards-anchor {
+      scroll-margin-top: var(--scroll-offset, 104px);
+    }
+
