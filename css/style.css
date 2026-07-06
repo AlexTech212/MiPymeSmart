@@ -2173,3 +2173,91 @@
       }
     }
 
+    /* Ajuste visual v13:
+       Botón "Solicitar diagnóstico" más fino y corrección del pequeño borde blanco
+       que se veía en esquinas de elementos clickeables sobre fondos oscuros. */
+    .btn,
+    .quick-social,
+    .chat-toggle,
+    .to-top,
+    .wa-float,
+    .tab-btn,
+    .theme-dot,
+    .hamburger,
+    .chat-close,
+    .chat-form button,
+    .quick-replies button {
+      background-clip: padding-box;
+      -webkit-background-clip: padding-box;
+      outline: none;
+    }
+
+    .btn-primary,
+    .nav > .btn-primary,
+    .cta .btn-primary {
+      border-color: transparent !important;
+      box-shadow: 0 16px 38px rgba(25, 243, 182, .18);
+    }
+
+    .nav > .btn-primary {
+      min-height: 42px;
+      padding: 11px 18px;
+      font-size: 14px;
+      border-radius: 999px;
+    }
+
+    .btn-secondary,
+    .quick-social,
+    .hamburger,
+    .chat-close,
+    .quick-replies button,
+    .tab-btn {
+      border-color: rgba(255, 255, 255, .10);
+      box-shadow: none;
+    }
+
+    .quick-social {
+      box-shadow: 0 12px 28px rgba(0,0,0,.16);
+    }
+
+    .quick-social:hover,
+    .btn-secondary:hover,
+    .tab-btn:hover,
+    .hamburger:hover {
+      border-color: rgba(25, 243, 182, .26);
+    }
+
+    .card,
+    .stat,
+    .screen-card,
+    .system-window,
+    .hero-panel,
+    .profile-card,
+    .story-card,
+    .image-stage,
+    .cta,
+    .faq-item,
+    .portfolio-mini-item,
+    .value-item,
+    .meta-item {
+      background-clip: padding-box;
+      -webkit-background-clip: padding-box;
+    }
+
+    .btn:focus-visible,
+    .quick-social:focus-visible,
+    .hamburger:focus-visible,
+    .chat-toggle:focus-visible,
+    .to-top:focus-visible,
+    .wa-float:focus-visible {
+      outline: 2px solid rgba(25, 243, 182, .32);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 640px) {
+      .nav > .btn-primary {
+        min-height: 40px;
+        padding: 10px 16px;
+      }
+    }
+
