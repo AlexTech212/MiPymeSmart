@@ -487,23 +487,25 @@ const themes = {
         card.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       }
 
-      function getInitialY() {
+      function getInitialY(card, index) {
         const pageTop = window.pageYOffset;
 
-        // Ubicación inicial bajo los textos de confianza y cerca de estadísticas,
-        // fuera del recuadro transparente del hero.
+        // Ubicación inicial al lado de las estadísticas, no debajo de ellas.
+        // Así no crea sensación de espacio extra hacia abajo.
         if (stats) {
           const statsRect = stats.getBoundingClientRect();
-          return statsRect.bottom + pageTop + 24;
+          const statsTop = statsRect.top + pageTop;
+          const chatOffset = index === 1 ? -24 : 116;
+          return statsTop + chatOffset;
         }
 
         if (trustRow) {
           const trustRect = trustRow.getBoundingClientRect();
-          return trustRect.bottom + pageTop + 30;
+          return trustRect.bottom + pageTop + (index === 1 ? 22 : 154);
         }
 
         const heroRect = hero.getBoundingClientRect();
-        return heroRect.top + pageTop + 520;
+        return heroRect.top + pageTop + (index === 1 ? 460 : 600);
       }
 
       function placeInitialCards(force = false) {
@@ -538,13 +540,16 @@ const themes = {
           if (!force && state.placed) return;
 
           const bounds = getPlayBounds(card);
-          const baseY = clamp(getInitialY(), bounds.minY, bounds.maxY);
-          const firstX = Math.min(36, bounds.maxX);
-          const secondX = Math.min(firstX + cards[0].offsetWidth + 22, bounds.maxX);
-          const fallbackSecondX = bounds.maxX;
+          const baseY = clamp(getInitialY(card, index), bounds.minY, bounds.maxY);
 
-          const homeX = index === 0 ? firstX : (secondX < bounds.maxX ? secondX : fallbackSecondX);
-          const homeY = index === 0 ? baseY : Math.min(baseY + 14, bounds.maxY);
+          // En escritorio quedan al lado derecho de las estadísticas, como viñetas flotantes.
+          // En pantallas pequeñas quedan centradas para no tapar contenido.
+          const isMobile = window.innerWidth <= 760;
+          const rightColumnX = Math.max(bounds.minX, bounds.maxX - 12);
+          const mobileX = Math.max(bounds.minX, Math.min(bounds.maxX, (window.innerWidth - card.offsetWidth) / 2));
+
+          const homeX = isMobile ? mobileX : rightColumnX;
+          const homeY = baseY;
 
           state.homeX = homeX;
           state.homeY = homeY;

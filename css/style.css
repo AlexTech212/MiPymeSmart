@@ -2010,3 +2010,92 @@
       }
     }
 
+    /* Accesos rápidos arriba del panel del hero: TikTok + WhatsApp */
+    .hero-quick-actions {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin: 0 4px 12px;
+    }
+
+    .quick-social {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--soft);
+      background: rgba(5,9,15,.55);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      font-weight: 950;
+      box-shadow: 0 12px 26px rgba(0,0,0,.16);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .quick-social:hover {
+      transform: translateY(-2px);
+      border-color: rgba(25,243,182,.42);
+      background: rgba(255,255,255,.11);
+    }
+
+    .quick-social span {
+      width: 19px;
+      height: 19px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #031016;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .quick-social small {
+      color: inherit;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .quick-tiktok span {
+      background: linear-gradient(135deg, #ffffff, #37d6ff 48%, #ff3b7f);
+    }
+
+    .quick-whatsapp span {
+      background: linear-gradient(135deg, #19f3b6, #37d6ff);
+    }
+
+    /* Ajuste v8:
+       Las tarjetas flotantes inician al lado de las estadísticas, sin ocupar espacio extra hacia abajo.
+       Siguen pudiendo lanzarse por la portada y soluciones. */
+    .global-game-card {
+      z-index: 74;
+      width: min(292px, calc(100vw - 36px));
+    }
+
+    .global-game-card.chat-preview {
+      width: min(352px, calc(100vw - 36px));
+    }
+
+    @media (max-width: 760px) {
+      .hero-quick-actions {
+        justify-content: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .quick-social {
+        min-height: 32px;
+        padding: 7px 10px;
+      }
+
+      .global-game-card,
+      .global-game-card.chat-preview {
+        width: calc(100vw - 32px);
+      }
+    }
+
