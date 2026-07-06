@@ -1162,4 +1162,249 @@ const themes = {
     window.addEventListener("DOMContentLoaded", initMovableFloatingControls);
 
 
+
+
+    // Ajuste v19:
+    // El chatbot se mueve como una caja inquieta y muestra una invitación elegante para chatear.
+    function initChatbotInvitation() {
+      const chatRoot = document.querySelector(".ai-chat");
+      const chatToggle = document.querySelector("#chatToggle");
+      const chatWindow = document.querySelector("#chatWindow");
+
+      if (!chatRoot || !chatToggle || !chatWindow) return;
+
+      if (!chatToggle.querySelector(".chat-spark")) {
+        ["one", "two", "three"].forEach(name => {
+          const spark = document.createElement("span");
+          spark.className = `chat-spark ${name}`;
+          chatToggle.appendChild(spark);
+        });
+      }
+
+      const invite = document.createElement("div");
+      invite.className = "chat-invite";
+      invite.setAttribute("role", "status");
+      invite.setAttribute("aria-live", "polite");
+      invite.innerHTML = `
+        <div class="chat-invite-top">
+          <div class="chat-invite-title"><span>IA</span> ¿Te ayudo a elegir una solución?</div>
+          <button class="chat-invite-close" type="button" aria-label="Cerrar invitación">×</button>
+        </div>
+        <p>Puedo orientarte sobre web, IA, electricidad, climatización o automatización para tu pyme.</p>
+        <div class="chat-invite-actions">
+          <button class="chat-invite-open" type="button">Chatear ahora</button>
+          <span class="chat-invite-mini">Respuesta rápida</span>
+        </div>
+      `;
+      chatRoot.appendChild(invite);
+
+      const closeBtn = invite.querySelector(".chat-invite-close");
+      const openBtn = invite.querySelector(".chat-invite-open");
+
+      let inviteTimer = null;
+      let attentionTimer = null;
+      let dismissed = sessionStorage.getItem("mipymesmart-chat-invite-dismissed") === "true";
+
+      function shakeCrate() {
+        if (chatWindow.classList.contains("open")) return;
+
+        chatToggle.classList.remove("chat-crate-attention");
+        void chatToggle.offsetWidth;
+        chatToggle.classList.add("chat-crate-attention");
+
+        setTimeout(() => {
+          chatToggle.classList.remove("chat-crate-attention");
+        }, 1400);
+      }
+
+      function showInvite() {
+        if (dismissed || chatWindow.classList.contains("open")) return;
+
+        shakeCrate();
+
+        setTimeout(() => {
+          if (!dismissed && !chatWindow.classList.contains("open")) {
+            invite.classList.add("show");
+          }
+        }, 420);
+
+        clearTimeout(inviteTimer);
+        inviteTimer = setTimeout(() => {
+          invite.classList.remove("show");
+        }, 11500);
+      }
+
+      function dismissInvite(permanent = false) {
+        invite.classList.remove("show");
+        clearTimeout(inviteTimer);
+
+        if (permanent) {
+          dismissed = true;
+          sessionStorage.setItem("mipymesmart-chat-invite-dismissed", "true");
+        }
+      }
+
+      function openChatFromInvite() {
+        dismissInvite(true);
+
+        if (!chatWindow.classList.contains("open")) {
+          chatToggle.click();
+        }
+      }
+
+      closeBtn.addEventListener("click", () => dismissInvite(true));
+      openBtn.addEventListener("click", openChatFromInvite);
+
+      chatToggle.addEventListener("click", () => {
+        dismissInvite(true);
+      });
+
+      chatWindow.addEventListener("click", () => {
+        dismissInvite(true);
+      });
+
+      // Primera invitación después de unos segundos.
+      setTimeout(showInvite, 5200);
+
+      // Luego, si no se ha cerrado ni abierto, vuelve a intentar de forma moderada.
+      attentionTimer = setInterval(() => {
+        if (!dismissed && !chatWindow.classList.contains("open")) {
+          showInvite();
+        } else if (dismissed) {
+          clearInterval(attentionTimer);
+        }
+      }, 65000);
+
+      // Pequeña reacción visual al pasar cerca, sin mostrar invitación invasiva.
+      chatRoot.addEventListener("mouseenter", () => {
+        if (!chatWindow.classList.contains("open")) {
+          shakeCrate();
+        }
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", initChatbotInvitation);
+
+
+
+    // Ajuste v20:
+    // Efecto de luz moderno tipo aura premium para elementos clickeables.
+    // Agrega ondas ascendentes en hover/click y al mover controles flotantes.
+    function initEnergyHoverEffects() {
+      const selector = [
+        "a",
+        "button",
+        ".pill",
+        ".card",
+        ".solution-card",
+        ".clickable-card",
+        ".quick-social",
+        ".theme-dot",
+        ".wa-float",
+        ".chat-toggle",
+        ".tab-btn",
+        ".service-link"
+      ].join(",");
+
+      const elements = Array.from(document.querySelectorAll(selector))
+        .filter(el => {
+          if (!el || el.classList.contains("energy-ready")) return false;
+          if (el.closest(".chat-invite") && !el.classList.contains("chat-invite-open")) return false;
+          return true;
+        });
+
+      elements.forEach(el => {
+        el.classList.add("energy-hover", "energy-ready");
+
+        const tag = el.tagName.toLowerCase();
+        const isStrong =
+          el.classList.contains("chat-toggle") ||
+          el.classList.contains("wa-float") ||
+          el.classList.contains("quick-social") ||
+          el.classList.contains("btn-primary") ||
+          el.classList.contains("hero-solution-pill");
+
+        if (isStrong) {
+          el.classList.add("energy-strong");
+        }
+
+        if (!el.querySelector(":scope > .energy-aura")) {
+          const aura = document.createElement("span");
+          aura.className = "energy-aura";
+          aura.setAttribute("aria-hidden", "true");
+          el.appendChild(aura);
+        }
+
+        if (!el.querySelector(":scope > .energy-wave")) {
+          const wave = document.createElement("span");
+          wave.className = "energy-wave";
+          wave.setAttribute("aria-hidden", "true");
+          el.appendChild(wave);
+        }
+
+        if (!el.querySelector(":scope > .energy-click-ring")) {
+          const ring = document.createElement("span");
+          ring.className = "energy-click-ring";
+          ring.setAttribute("aria-hidden", "true");
+          el.appendChild(ring);
+        }
+
+        el.addEventListener("pointerenter", () => {
+          el.classList.add("energy-active");
+        });
+
+        el.addEventListener("pointerleave", () => {
+          el.classList.remove("energy-active");
+        });
+
+        el.addEventListener("pointerdown", () => {
+          el.classList.remove("energy-clicked");
+          void el.offsetWidth;
+          el.classList.add("energy-clicked");
+
+          setTimeout(() => {
+            el.classList.remove("energy-clicked");
+          }, 760);
+        });
+      });
+
+      // Cuando se mueve el bloque flotante, también se activa la energía.
+      const floatingCluster = document.querySelector(".floating-control-cluster");
+      if (floatingCluster) {
+        const floatingItems = floatingCluster.querySelectorAll(".theme-dot, .wa-float");
+
+        const observer = new MutationObserver(() => {
+          const moving = floatingCluster.classList.contains("is-moving");
+
+          floatingItems.forEach(item => {
+            item.classList.toggle("energy-moving", moving);
+          });
+        });
+
+        observer.observe(floatingCluster, {
+          attributes: true,
+          attributeFilter: ["class"]
+        });
+      }
+
+      // Cuando el chatbot hace la animación tipo caja inquieta,
+      // se activa también el aura energética.
+      const chatToggle = document.querySelector("#chatToggle");
+      if (chatToggle) {
+        const observer = new MutationObserver(() => {
+          chatToggle.classList.toggle(
+            "energy-moving",
+            chatToggle.classList.contains("chat-crate-attention")
+          );
+        });
+
+        observer.observe(chatToggle, {
+          attributes: true,
+          attributeFilter: ["class"]
+        });
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", initEnergyHoverEffects);
+
     document.getElementById("year").textContent = new Date().getFullYear();

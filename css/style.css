@@ -2597,3 +2597,504 @@
       }
     }
 
+    /* Ajuste v19:
+       Chatbot con animación tipo caja inquieta y notificación elegante de invitación. */
+    .ai-chat {
+      z-index: 125;
+    }
+
+    .chat-toggle {
+      position: relative;
+      overflow: visible;
+      isolation: isolate;
+      transform-origin: 50% 88%;
+      background:
+        linear-gradient(135deg, rgba(25,243,182,1), rgba(55,214,255,1)) !important;
+      box-shadow:
+        0 18px 48px rgba(25,243,182,.22),
+        inset 0 0 0 1px rgba(255,255,255,.26);
+    }
+
+    .chat-toggle::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      right: 11px;
+      top: 8px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.45);
+      transform-origin: left center;
+      opacity: .75;
+      pointer-events: none;
+    }
+
+    .chat-toggle::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(3,16,22,.18);
+      border-radius: 16px;
+      pointer-events: none;
+    }
+
+    .chat-toggle.chat-crate-attention {
+      animation: chatCrateWiggle 1.2s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    .chat-toggle.chat-crate-attention::before {
+      animation: chatCrateLid 1.2s ease both;
+    }
+
+    .chat-toggle.chat-crate-attention .chat-spark {
+      animation: chatSparkPop .75s ease-out forwards;
+    }
+
+    .chat-spark {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--brand-2);
+      box-shadow: 0 0 16px rgba(25,243,182,.9);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .chat-spark.one {
+      top: -4px;
+      left: 8px;
+    }
+
+    .chat-spark.two {
+      top: -8px;
+      right: 10px;
+      animation-delay: .08s;
+    }
+
+    .chat-spark.three {
+      bottom: 10px;
+      right: -5px;
+      animation-delay: .16s;
+    }
+
+    .chat-invite {
+      position: absolute;
+      right: 0;
+      bottom: 72px;
+      width: min(316px, calc(100vw - 36px));
+      padding: 14px 14px 14px 16px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 22px;
+      color: var(--soft);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(25,243,182,.18), transparent 34%),
+        radial-gradient(circle at 100% 20%, rgba(55,214,255,.14), transparent 36%),
+        rgba(6,10,16,.92);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 70px rgba(0,0,0,.34);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(.98);
+      transition: opacity .24s ease, transform .24s ease;
+    }
+
+    .chat-invite.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .chat-invite::after {
+      content: "";
+      position: absolute;
+      right: 20px;
+      bottom: -8px;
+      width: 16px;
+      height: 16px;
+      transform: rotate(45deg);
+      border-right: 1px solid rgba(255,255,255,.16);
+      border-bottom: 1px solid rgba(255,255,255,.16);
+      background: rgba(6,10,16,.92);
+      backdrop-filter: blur(18px);
+    }
+
+    .chat-invite-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .chat-invite-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--white);
+      font-weight: 950;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+    }
+
+    .chat-invite-title span {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      color: #031016;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      font-size: 14px;
+    }
+
+    .chat-invite-close {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      color: var(--muted);
+      background: rgba(255,255,255,.06);
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+
+    .chat-invite-close:hover {
+      color: var(--white);
+      background: rgba(255,255,255,.12);
+      transform: translateY(-1px);
+    }
+
+    .chat-invite p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    .chat-invite-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chat-invite-open {
+      min-height: 34px;
+      padding: 8px 11px;
+      border: 0;
+      border-radius: 999px;
+      color: #031016;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      font-size: 12px;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(25,243,182,.16);
+    }
+
+    .chat-invite-mini {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    @keyframes chatCrateWiggle {
+      0%, 100% { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
+      10% { transform: translate3d(-1px,-3px,0) rotate(-6deg) scale(1.02); }
+      20% { transform: translate3d(2px,-5px,0) rotate(6deg) scale(1.04); }
+      30% { transform: translate3d(-2px,-2px,0) rotate(-5deg) scale(1.02); }
+      40% { transform: translate3d(2px,0,0) rotate(4deg) scale(1); }
+      52% { transform: translate3d(-1px,-4px,0) rotate(-3deg) scale(1.03); }
+      64% { transform: translate3d(1px,0,0) rotate(2deg) scale(1); }
+      78% { transform: translate3d(0,-2px,0) rotate(-1deg) scale(1.015); }
+    }
+
+    @keyframes chatCrateLid {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      22% { transform: rotate(-10deg) translateY(-2px); }
+      44% { transform: rotate(12deg) translateY(-3px); }
+      66% { transform: rotate(-5deg) translateY(-1px); }
+    }
+
+    @keyframes chatSparkPop {
+      0% { opacity: 0; transform: translate(0,0) scale(.2); }
+      18% { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--spark-x, 0), var(--spark-y, -18px)) scale(1.8); }
+    }
+
+    .chat-spark.one { --spark-x: -12px; --spark-y: -20px; }
+    .chat-spark.two { --spark-x: 12px; --spark-y: -22px; }
+    .chat-spark.three { --spark-x: 18px; --spark-y: 4px; }
+
+    @media (max-width: 640px) {
+      .chat-invite {
+        right: 0;
+        bottom: 66px;
+        width: min(316px, calc(100vw - 28px));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .chat-toggle.chat-crate-attention,
+      .chat-toggle.chat-crate-attention::before,
+      .chat-toggle.chat-crate-attention .chat-spark {
+        animation: none !important;
+      }
+    }
+
+    /* Ajuste v20:
+       Efecto moderno de luz/energía tipo aura premium en elementos clickeables,
+       con ondas ascendentes al hover, click y movimiento. Sin sonido. */
+
+    .energy-hover {
+      position: relative;
+      isolation: isolate;
+      overflow: visible;
+      transition:
+        transform .22s ease,
+        filter .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease;
+    }
+
+    .energy-hover .energy-aura,
+    .energy-hover .energy-wave,
+    .energy-hover .energy-click-ring {
+      position: absolute;
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0;
+      z-index: 5;
+    }
+
+    .energy-hover .energy-aura {
+      inset: -8px;
+      border: 1px solid rgba(25,243,182,.0);
+      background:
+        radial-gradient(circle at 50% 100%, rgba(25,243,182,.22), transparent 44%),
+        radial-gradient(circle at 12% 18%, rgba(55,214,255,.12), transparent 32%),
+        radial-gradient(circle at 90% 20%, rgba(144,91,255,.12), transparent 36%);
+      filter: blur(.2px);
+      box-shadow:
+        0 0 0 rgba(25,243,182,0),
+        0 0 0 rgba(55,214,255,0);
+      transform: scale(.96);
+      transition:
+        opacity .24s ease,
+        transform .24s ease,
+        border-color .24s ease,
+        box-shadow .24s ease;
+    }
+
+    .energy-hover:hover .energy-aura,
+    .energy-hover.energy-active .energy-aura,
+    .energy-hover.energy-moving .energy-aura {
+      opacity: 1;
+      transform: scale(1);
+      border-color: rgba(25,243,182,.34);
+      box-shadow:
+        0 0 22px rgba(25,243,182,.22),
+        0 0 46px rgba(55,214,255,.12),
+        inset 0 0 18px rgba(255,255,255,.045);
+    }
+
+    .energy-hover:hover,
+    .energy-hover.energy-active,
+    .energy-hover.energy-moving {
+      filter: brightness(1.08) saturate(1.15);
+    }
+
+    .energy-hover.energy-strong:hover,
+    .energy-hover.energy-strong.energy-active,
+    .energy-hover.energy-strong.energy-moving {
+      box-shadow:
+        0 0 0 1px rgba(25,243,182,.22) inset,
+        0 0 34px rgba(25,243,182,.26),
+        0 24px 72px rgba(0,0,0,.34);
+    }
+
+    .energy-hover .energy-wave {
+      left: 50%;
+      bottom: 8%;
+      width: 76%;
+      height: 44%;
+      transform: translateX(-50%) translateY(14px) scale(.78);
+      border: 1px solid rgba(25,243,182,.28);
+      background:
+        linear-gradient(to top, rgba(25,243,182,.16), rgba(55,214,255,.06), transparent);
+      box-shadow:
+        0 0 18px rgba(25,243,182,.18),
+        inset 0 0 18px rgba(55,214,255,.08);
+      filter: blur(.1px);
+    }
+
+    .energy-hover:hover .energy-wave,
+    .energy-hover.energy-moving .energy-wave {
+      animation: energyWaveRise 1.25s ease-out infinite;
+    }
+
+    .energy-hover.energy-clicked .energy-click-ring {
+      inset: -10px;
+      border: 1px solid rgba(25,243,182,.56);
+      box-shadow:
+        0 0 24px rgba(25,243,182,.38),
+        0 0 56px rgba(55,214,255,.18);
+      animation: energyClickBurst .62s ease-out forwards;
+    }
+
+    .energy-hover.energy-clicked .energy-wave {
+      animation: energyWaveRiseFast .72s ease-out 1;
+    }
+
+    .energy-hover.energy-clicked .energy-aura {
+      opacity: 1;
+      transform: scale(1.03);
+      border-color: rgba(55,214,255,.42);
+      box-shadow:
+        0 0 30px rgba(25,243,182,.32),
+        0 0 70px rgba(55,214,255,.18),
+        inset 0 0 20px rgba(255,255,255,.07);
+    }
+
+    /* Intensidad especial para el chatbot: más aura, más presencia. */
+    .chat-toggle.energy-hover:hover,
+    .chat-toggle.energy-hover.energy-active,
+    .chat-toggle.energy-hover.energy-moving,
+    .chat-toggle.energy-hover.chat-crate-attention {
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.30) inset,
+        0 0 34px rgba(25,243,182,.42),
+        0 0 78px rgba(55,214,255,.24),
+        0 22px 70px rgba(0,0,0,.34);
+    }
+
+    .chat-toggle.energy-hover:hover .energy-aura,
+    .chat-toggle.energy-hover.energy-moving .energy-aura,
+    .chat-toggle.energy-hover.chat-crate-attention .energy-aura {
+      inset: -12px;
+      opacity: 1;
+      animation: energyAuraBreath 1.65s ease-in-out infinite;
+    }
+
+    .chat-toggle.energy-hover.chat-crate-attention .energy-wave {
+      animation: energyWaveRiseFast .72s ease-out infinite;
+    }
+
+    /* WhatsApp y paleta también se sienten como piezas energizadas. */
+    .wa-float.energy-hover:hover,
+    .wa-float.energy-hover.energy-moving {
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.22) inset,
+        0 0 30px rgba(25,243,182,.32),
+        0 0 64px rgba(37,211,102,.22),
+        0 22px 60px rgba(0,0,0,.28);
+    }
+
+    .theme-dot.energy-hover:hover,
+    .theme-dot.energy-hover.energy-active {
+      transform: translateY(-2px) scale(1.12);
+      box-shadow:
+        0 0 0 4px rgba(25,243,182,.10),
+        0 0 20px rgba(25,243,182,.28),
+        0 0 38px rgba(55,214,255,.14);
+    }
+
+    /* En tarjetas grandes el efecto es más elegante y menos brusco. */
+    .card.energy-hover:hover,
+    .clickable-card.energy-hover:hover,
+    .solution-card.energy-hover:hover {
+      transform: translateY(-4px);
+      border-color: rgba(25,243,182,.28);
+    }
+
+    /* En botones pequeños, que el efecto no desordene el layout. */
+    .nav a.energy-hover:hover,
+    .btn.energy-hover:hover,
+    .quick-social.energy-hover:hover,
+    .tab-btn.energy-hover:hover,
+    .chat-form button.energy-hover:hover,
+    .quick-replies button.energy-hover:hover {
+      transform: translateY(-2px);
+    }
+
+    @keyframes energyWaveRise {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(16px) scale(.70);
+      }
+
+      18% {
+        opacity: .74;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-34px) scale(1.18);
+      }
+    }
+
+    @keyframes energyWaveRiseFast {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(18px) scale(.62);
+      }
+
+      16% {
+        opacity: .9;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-44px) scale(1.32);
+      }
+    }
+
+    @keyframes energyClickBurst {
+      0% {
+        opacity: 0;
+        transform: scale(.72);
+      }
+
+      22% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.28);
+      }
+    }
+
+    @keyframes energyAuraBreath {
+      0%, 100% {
+        transform: scale(.98);
+        filter: brightness(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+        filter: brightness(1.18);
+      }
+    }
+
+    @media (hover: none) {
+      .energy-hover:hover .energy-wave {
+        animation: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .energy-hover,
+      .energy-hover .energy-aura,
+      .energy-hover .energy-wave,
+      .energy-hover .energy-click-ring,
+      .chat-toggle.energy-hover:hover .energy-aura,
+      .chat-toggle.energy-hover.energy-moving .energy-aura,
+      .chat-toggle.energy-hover.chat-crate-attention .energy-aura {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
